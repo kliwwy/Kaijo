@@ -1,0 +1,108 @@
+From 828573877361180150fc36a5da007c538281a250 Mon Sep 17 00:00:00 2001
+From: Matthew <matthew.steglinski@utoronto.ca>
+Date: Wed, 9 Aug 2017 22:59:44 -0400
+Subject: [PATCH] Implement setting world spawnpoint yaw and pitch
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index afa674f5..4e21f55c 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -82,7 +82,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+         this.height = 1.62F;
+         ChunkCoordinates chunkcoordinates = world.getSpawn();
+ 
+-        this.setPositionRotation((double) chunkcoordinates.x + 0.5D, (double) (chunkcoordinates.y + 1), (double) chunkcoordinates.z + 0.5D, 0.0F, 0.0F);
++        this.setPositionRotation((double) chunkcoordinates.x + 0.5D, (double) (chunkcoordinates.y + 1), (double) chunkcoordinates.z + 0.5D, world.getWorldData().getSpawnYaw(), world.getWorldData().getSpawnPitch());
+         this.aZ = 180.0F;
+         this.maxFireTicks = 20;
+     }
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index 7f0dad13..a8e59270 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -105,8 +105,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         this.bO = minecraftserver.getPlayerList().a((EntityHuman) this);
+         this.W = 0.0F;
+         this.height = 0.0F;
+-        this.setPositionRotation((double) i + 0.5D, (double) k, (double) j + 0.5D, 0.0F, 0.0F);
+-
++        this.setPositionRotation((double) i + 0.5D, (double) k, (double) j + 0.5D, worldserver.getWorldData().getSpawnYaw(), worldserver.getWorldData().getSpawnPitch());
+         while (!worldserver.getCubes(this, this.boundingBox).isEmpty()) {
+             this.setPosition(this.locX, this.locY + 1.0D, this.locZ);
+         }
+@@ -143,6 +142,8 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         if (world == null) {
+             this.dead = false;
+             ChunkCoordinates position = null;
++            float yaw = 0;
++            float pitch = 0;
+             if (this.spawnWorld != null && !this.spawnWorld.equals("")) {
+                 CraftWorld cworld = (CraftWorld) Bukkit.getServer().getWorld(this.spawnWorld);
+                 if (cworld != null && this.getBed() != null) {
+@@ -153,9 +154,11 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+             if (world == null || position == null) {
+                 world = ((CraftWorld) Bukkit.getServer().getWorlds().get(0)).getHandle();
+                 position = world.getSpawn();
++                yaw = world.getWorldData().getSpawnYaw();
++                pitch = world.getWorldData().getSpawnPitch();
+             }
+             this.world = world;
+-            this.setPosition(position.x + 0.5, position.y, position.z + 0.5);
++            this.setPositionRotation(position.x + 0.5, position.y, position.z + 0.5, yaw, pitch);
+         }
+         this.dimension = ((WorldServer) this.world).dimension;
+         this.playerInteractManager.a((WorldServer) world);
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 3cb395c1..f2941a50 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -554,7 +554,7 @@ public abstract class PlayerList {
+             if (location == null) {
+                 cworld = (CraftWorld) this.server.server.getWorlds().get(0);
+                 chunkcoordinates = cworld.getHandle().getSpawn();
+-                location = new Location(cworld, chunkcoordinates.x + 0.5, chunkcoordinates.y, chunkcoordinates.z + 0.5);
++                location = new Location(cworld, chunkcoordinates.x + 0.5, chunkcoordinates.y, chunkcoordinates.z + 0.5, cworld.getHandle().getWorldData().getSpawnYaw(), cworld.getHandle().getWorldData().getSpawnPitch());
+             }
+ 
+             Player respawnPlayer = this.cserver.getPlayer(entityplayer1);
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index 3fc108ee..ade94834 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -750,7 +750,7 @@ public class WorldServer extends World {
+                     if (spawn.getWorld() != ((WorldServer) this).getWorld()) {
+                         throw new IllegalStateException("Cannot set spawn point for " + this.worldData.getName() + " to be in another world (" + spawn.getWorld().getName() + ")");
+                     } else {
+-                        this.worldData.setSpawn(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
++                        this.worldData.setSpawn(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ(), spawn.getYaw(), spawn.getPitch());
+                         this.isLoading = false;
+                         return;
+                     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 1babd797..519bf6ef 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -99,13 +99,17 @@ public class CraftWorld implements World {
+ 
+     public Location getSpawnLocation() {
+         ChunkCoordinates spawn = world.getSpawn();
+-        return new Location(this, spawn.x, spawn.y, spawn.z);
++        return new Location(this, spawn.x, spawn.y, spawn.z, world.getWorldData().getSpawnYaw(), world.getWorldData().getSpawnPitch());
+     }
+ 
+     public boolean setSpawnLocation(int x, int y, int z) {
++        return setSpawnLocation(x, y, z, 0, 0);
++    }
++
++    public boolean setSpawnLocation(int x, int y, int z, float yaw, float pitch) {
+         try {
+             Location previousLocation = getSpawnLocation();
+-            world.worldData.setSpawn(x, y, z);
++            world.worldData.setSpawn(x, y, z, yaw, pitch);
+ 
+             // Notify anyone who's listening.
+             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
+-- 
+2.13.0.windows.1
+
