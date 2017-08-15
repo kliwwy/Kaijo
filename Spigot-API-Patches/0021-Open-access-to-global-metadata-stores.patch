@@ -1,0 +1,131 @@
+From 6d477fa0aa9aa8b6008313aba45347759ef92840 Mon Sep 17 00:00:00 2001
+From: Matthew <matthew.steglinski@utoronto.ca>
+Date: Thu, 10 Aug 2017 11:09:25 -0400
+Subject: [PATCH] Open access to global metadata stores
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index b85a699f..54ea9d77 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -15,6 +15,7 @@ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.command.ConsoleCommandSender;
+ import org.bukkit.command.PluginCommand;
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.inventory.InventoryType;
+ import org.bukkit.help.HelpMap;
+@@ -24,6 +25,7 @@ import org.bukkit.inventory.InventoryHolder;
+ import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.Recipe;
+ import org.bukkit.map.MapView;
++import org.bukkit.metadata.MetadataStore;
+ import org.bukkit.plugin.PluginManager;
+ import org.bukkit.plugin.ServicesManager;
+ import org.bukkit.plugin.messaging.Messenger;
+@@ -521,6 +523,27 @@ public final class Bukkit {
+     }
+ 
+     /**
++     * @see Server#getEntityMetadata() 
++     */
++    public static MetadataStore<Entity> getEntityMetadata() {
++        return server.getEntityMetadata();
++    }
++
++    /**
++     * @see Server#getPlayerMetadata()
++     */
++    public static MetadataStore<OfflinePlayer> getPlayerMetadata() {
++        return server.getPlayerMetadata();
++    }
++
++    /**
++     * @see Server#getWorldMetadata()
++     */
++    public static MetadataStore<World> getWorldMetadata() {
++        return server.getWorldMetadata();
++    }
++    
++    /**
+      * @see Server#getWorldContainer()
+      */
+     public static File getWorldContainer() {
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 86d88546..1b5adf86 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -13,6 +13,7 @@ import java.util.UUID;
+ import java.util.logging.Logger;
+ 
+ import org.bukkit.Warning.WarningState;
++import org.bukkit.block.Block;
+ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.command.ConsoleCommandSender;
+@@ -27,6 +28,7 @@ import org.bukkit.inventory.InventoryHolder;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.Recipe;
+ import org.bukkit.map.MapView;
++import org.bukkit.metadata.MetadataStore;
+ import org.bukkit.permissions.Permissible;
+ import org.bukkit.plugin.PluginManager;
+ import org.bukkit.plugin.ServicesManager;
+@@ -685,6 +687,27 @@ public interface Server extends PluginMessageRecipient {
+     public ConsoleCommandSender getConsoleSender();
+ 
+     /**
++     * Gets the metadata store for all entities.
++     *
++     * @return entity metadata store
++     */
++    public MetadataStore<Entity> getEntityMetadata();
++
++    /**
++     * Gets the metadata store for all players.
++     *
++     * @return player metadata store
++     */
++    public MetadataStore<OfflinePlayer> getPlayerMetadata();
++
++    /**
++     * Gets the metadata store for all worlds.
++     *
++     * @return world metadata store
++     */
++    public MetadataStore<World> getWorldMetadata();
++
++    /**
+      * Gets the folder that contains all of the various {@link World}s.
+      *
+      * @return folder that contains all worlds
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index 54eba08c..af2707e6 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
+ import org.bukkit.entity.*;
+ import org.bukkit.generator.BlockPopulator;
+ import org.bukkit.inventory.ItemStack;
++import org.bukkit.metadata.MetadataStore;
+ import org.bukkit.metadata.Metadatable;
+ import org.bukkit.plugin.messaging.PluginMessageRecipient;
+ import org.bukkit.util.Vector;
+@@ -45,6 +46,13 @@ public interface World extends PluginMessageRecipient, Metadatable {
+     public Block getBlockAt(Location location);
+ 
+     /**
++     * Gets the metadata store for all blocks.
++     *
++     * @return block metadata store
++     */
++    public MetadataStore<Block> getBlockMetadata();
++
++    /**
+      * Gets the block type ID at the given coordinates
+      *
+      * @param x X-coordinate of the block
+-- 
+2.13.0.windows.1
+
