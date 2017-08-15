@@ -1,0 +1,114 @@
+From 84c1264ee567c89a1fd04c2bd0e42375ca055419 Mon Sep 17 00:00:00 2001
+From: Matthew <matthew.steglinski@utoronto.ca>
+Date: Mon, 14 Aug 2017 22:05:07 -0400
+Subject: [PATCH] Don't broadcast block place sounds when BlockPlaceEvent is
+ cancelled
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemBlock.java b/src/main/java/net/minecraft/server/ItemBlock.java
+new file mode 100644
+index 00000000..efe13bf3
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/ItemBlock.java
+@@ -0,0 +1,83 @@
++package net.minecraft.server;
++
++public class ItemBlock extends Item {
++
++    protected final Block block;
++
++    public ItemBlock(Block block) {
++        this.block = block;
++    }
++
++    public ItemBlock b(String s) {
++        super.c(s);
++        return this;
++    }
++
++    public boolean interactWith(ItemStack itemstack, EntityHuman entityhuman, World world, int i, int j, int k, int l, float f, float f1, float f2) {
++        Block block = world.getType(i, j, k);
++
++        if (block == Blocks.SNOW && (world.getData(i, j, k) & 7) < 1) {
++            l = 1;
++        } else if (block != Blocks.VINE && block != Blocks.LONG_GRASS && block != Blocks.DEAD_BUSH) {
++            if (l == 0) {
++                --j;
++            }
++
++            if (l == 1) {
++                ++j;
++            }
++
++            if (l == 2) {
++                --k;
++            }
++
++            if (l == 3) {
++                ++k;
++            }
++
++            if (l == 4) {
++                --i;
++            }
++
++            if (l == 5) {
++                ++i;
++            }
++        }
++
++        if (itemstack.count == 0) {
++            return false;
++        } else if (!entityhuman.a(i, j, k, l, itemstack)) {
++            return false;
++        } else if (j == 255 && this.block.getMaterial().isBuildable()) {
++            return false;
++        } else if (world.mayPlace(this.block, i, j, k, false, l, entityhuman, itemstack)) {
++            int i1 = this.filterData(itemstack.getData());
++            int j1 = this.block.getPlacedData(world, i, j, k, l, f, f1, f2, i1);
++
++            if (world.setTypeAndData(i, j, k, this.block, j1, 3)) {
++                if (world.getType(i, j, k) == this.block) {
++                    this.block.postPlace(world, i, j, k, entityhuman, itemstack);
++                    this.block.postPlace(world, i, j, k, j1);
++                }
++                
++                --itemstack.count;
++            }
++
++            return true;
++        } else {
++            return false;
++        }
++    }
++
++    public String a(ItemStack itemstack) {
++        return this.block.a();
++    }
++
++    public String getName() {
++        return this.block.a();
++    }
++
++    public Item c(String s) {
++        return this.b(s);
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index ee82aba5..ecfcf9c7 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -168,6 +168,10 @@ public final class ItemStack {
+                     }
+ 
+                     world.notifyAndUpdatePhysics(x, y, z, null, oldBlock, block, updateFlag); // send null chunk as chunk.k() returns false by this point
++                    if (this.getItem() instanceof ItemBlock) {
++                        ItemBlock itemBlock = (ItemBlock) this.getItem();
++                        world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), itemBlock.block.stepSound.getPlaceSound(), (itemBlock.block.stepSound.getVolume1() + 1.0F) / 2.0F, itemBlock.block.stepSound.getVolume2() * 0.8F);
++                    }
+                 }
+                 entityhuman.a(StatisticList.USE_ITEM_COUNT[Item.getId(this.item)], 1);
+             }
+-- 
+2.13.0.windows.1
+
