@@ -1,0 +1,84 @@
+From 1764b8638d877ec3414c135e83d2e4415c263177 Mon Sep 17 00:00:00 2001
+From: Matthew <matthew.steglinski@utoronto.ca>
+Date: Thu, 17 Aug 2017 21:30:51 -0400
+Subject: [PATCH] Add hitEntity to ProjectileHitEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+index dbb420bd..246dd5f9 100644
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -229,7 +229,7 @@ public class EntityArrow extends Entity implements IProjectile {
+             // PaperSpigot end
+ 
+             if (movingobjectposition != null) {
+-                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
++                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition); // CraftBukkit - Call event
+ 
+                 if (movingobjectposition.entity != null) {
+                     f2 = MathHelper.sqrt(this.motX * this.motX + this.motY * this.motY + this.motZ * this.motZ);
+diff --git a/src/main/java/net/minecraft/server/EntityFireball.java b/src/main/java/net/minecraft/server/EntityFireball.java
+index 663714d1..a2868aeb 100644
+--- a/src/main/java/net/minecraft/server/EntityFireball.java
++++ b/src/main/java/net/minecraft/server/EntityFireball.java
+@@ -132,7 +132,7 @@ public abstract class EntityFireball extends Entity {
+ 
+                 // CraftBukkit start - Fire ProjectileHitEvent
+                 if (this.dead) {
+-                    CraftEventFactory.callProjectileHitEvent(this);
++                    CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
+                 }
+                 // CraftBukkit end
+             }
+diff --git a/src/main/java/net/minecraft/server/EntityFishingHook.java b/src/main/java/net/minecraft/server/EntityFishingHook.java
+index 0fc1e85f..ffececc8 100644
+--- a/src/main/java/net/minecraft/server/EntityFishingHook.java
++++ b/src/main/java/net/minecraft/server/EntityFishingHook.java
+@@ -184,7 +184,7 @@ public class EntityFishingHook extends Entity {
+             }
+ 
+             if (movingobjectposition != null) {
+-                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // Craftbukkit - Call event
++                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition); // Craftbukkit - Call event
+                 if (movingobjectposition.entity != null) {
+                     if (movingobjectposition.entity.damageEntity(DamageSource.projectile(this, this.owner), 0.0F)) {
+                         this.hooked = movingobjectposition.entity;
+diff --git a/src/main/java/net/minecraft/server/EntityProjectile.java b/src/main/java/net/minecraft/server/EntityProjectile.java
+index 73f52acc..71dc5240 100644
+--- a/src/main/java/net/minecraft/server/EntityProjectile.java
++++ b/src/main/java/net/minecraft/server/EntityProjectile.java
+@@ -163,7 +163,7 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
+                 this.a(movingobjectposition);
+                 // CraftBukkit start
+                 if (this.dead) {
+-                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
+                 }
+                 // CraftBukkit end
+             }
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 4d295051..4400ad84 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -28,6 +28,7 @@ import net.minecraft.server.Explosion;
+ import net.minecraft.server.InventoryCrafting;
+ import net.minecraft.server.ItemStack;
+ import net.minecraft.server.Items;
++import net.minecraft.server.MovingObjectPosition;
+ import net.minecraft.server.PacketPlayInCloseWindow;
+ import net.minecraft.server.PacketPlayOutSetSlot;
+ import net.minecraft.server.Slot;
+@@ -751,8 +752,8 @@ public class CraftEventFactory {
+         return event;
+     }
+ 
+-    public static ProjectileHitEvent callProjectileHitEvent(Entity entity) {
+-        ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity());
++    public static ProjectileHitEvent callProjectileHitEvent(Entity entity, MovingObjectPosition position) {
++        ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity(), position.entity == null ? null : position.entity.getBukkitEntity());
+         entity.world.getServer().getPluginManager().callEvent(event);
+         return event;
+     }
+-- 
+2.13.0.windows.1
+

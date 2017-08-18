@@ -1,0 +1,52 @@
+From f5009eeb1823a0da7273a92057fa7743d5fd4406 Mon Sep 17 00:00:00 2001
+From: Matthew <matthew.steglinski@utoronto.ca>
+Date: Thu, 17 Aug 2017 21:30:42 -0400
+Subject: [PATCH] Add hitEntity to ProjectileHitEvent
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java b/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java
+index 25ae8323..6bd277ad 100644
+--- a/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java
++++ b/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.event.entity;
+ 
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Projectile;
+ import org.bukkit.event.HandlerList;
+ 
+@@ -8,9 +9,15 @@ import org.bukkit.event.HandlerList;
+  */
+ public class ProjectileHitEvent extends EntityEvent {
+     private static final HandlerList handlers = new HandlerList();
++    private final Entity hitEntity;
+ 
+     public ProjectileHitEvent(final Projectile projectile) {
++        this(projectile, null);
++    }
++    
++    public ProjectileHitEvent(final Projectile projectile, Entity hitEntity) {
+         super(projectile);
++        this.hitEntity = hitEntity;
+     }
+ 
+     @Override
+@@ -18,6 +25,15 @@ public class ProjectileHitEvent extends EntityEvent {
+         return (Projectile) entity;
+     }
+ 
++    /**
++     * Gets the entity that was hit, if it was an entity that was hit.
++     * 
++     * @return hit entity or else null
++     */
++    public Entity getHitEntity() {
++        return hitEntity;
++    }
++    
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+-- 
+2.13.0.windows.1
+
