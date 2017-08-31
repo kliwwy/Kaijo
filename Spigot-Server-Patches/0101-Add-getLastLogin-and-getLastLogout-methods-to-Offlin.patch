@@ -1,0 +1,114 @@
+From 6e136119b4a2bb139a9800259bbbd274c77a8e88 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Thu, 31 Aug 2017 15:28:52 -0400
+Subject: [PATCH] Add getLastLogin and getLastLogout methods to OfflinePlayer
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftOfflinePlayer.java b/src/main/java/org/bukkit/craftbukkit/CraftOfflinePlayer.java
+index f1fa7139..359348c7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftOfflinePlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftOfflinePlayer.java
+@@ -210,7 +210,13 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
+         }
+     }
+ 
++    @Deprecated
+     public long getLastPlayed() {
++        return getLastLogin();
++    }
++
++    @Override
++    public long getLastLogin() {
+         Player player = getPlayer();
+         if (player != null) return player.getLastPlayed();
+ 
+@@ -228,6 +234,25 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
+         }
+     }
+ 
++    @Override
++    public long getLastLogout() {
++        Player player = getPlayer();
++        if (player != null) return player.getLastLogout();
++
++        NBTTagCompound data = getBukkitData();
++
++        if (data != null) {
++            if (data.hasKey("lastLogout")) {
++                return data.getLong("lastLogout");
++            } else {
++                File file = getDataFile();
++                return file.lastModified();
++            }
++        } else {
++            return 0;
++        }
++    }
++
+     public boolean hasPlayedBefore() {
+         return getData() != null;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 5067399a..e5376f0c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -64,6 +64,7 @@ import org.bukkit.scoreboard.Scoreboard;
+ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private long firstPlayed = 0;
+     private long lastPlayed = 0;
++    private long lastLogout = 0;
+     private boolean hasPlayedBefore = false;
+     private final ConversationTracker conversationTracker = new ConversationTracker();
+     private final Set<String> channels = new HashSet<String>();
+@@ -997,10 +998,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return firstPlayed;
+     }
+ 
++    @Deprecated
+     public long getLastPlayed() {
++        return getLastLogin();
++    }
++
++    @Override
++    public long getLastLogin() {
+         return lastPlayed;
+     }
+ 
++    @Override
++    public long getLastLogout() {
++        return lastLogout;
++    }
++
+     public boolean hasPlayedBefore() {
+         return hasPlayedBefore;
+     }
+@@ -1019,6 +1031,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+                 lastPlayed = data.getLong("lastPlayed");
+             }
+ 
++            if (data.hasKey("lastLogout")) {
++                lastLogout = data.getLong("lastLogout");
++            }
++
+             if (data.hasKey("newExp")) {
+                 EntityPlayer handle = getHandle();
+                 handle.newExp = data.getInt("newExp");
+@@ -1044,6 +1060,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         data.setBoolean("keepLevel", handle.keepLevel);
+         data.setLong("firstPlayed", getFirstPlayed());
+         data.setLong("lastPlayed", System.currentTimeMillis());
++        data.setLong("lastLogout", lastLogout);
+         data.setString("lastKnownName", handle.getName());
+     }
+ 
+@@ -1161,6 +1178,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     }
+ 
+     public void disconnect(String reason) {
++        this.lastLogout = System.currentTimeMillis();
+         conversationTracker.abandonAllConversations();
+         perm.clearPermissions();
+     }
+-- 
+2.11.0
+
