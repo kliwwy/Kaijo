@@ -1,0 +1,22 @@
+From 5ecc3d40664bfff2dcca34f12d4b3e1f11cdd45e Mon Sep 17 00:00:00 2001
+From: BuildTools <sainttx@users.noreply.github.com>
+Date: Sun, 3 Sep 2017 01:51:24 -0400
+Subject: [PATCH] Allow setting custom game rules
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 5ec7f6f..12d1af1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -1311,7 +1311,7 @@ public class CraftWorld implements World {
+         // No null values allowed
+         if (rule == null || value == null) return false;
+ 
+-        if (!isGameRule(rule)) return false;
++        /*if (!isGameRule(rule)) return false;*/
+ 
+         getHandle().getGameRules().set(rule, value);
+         return true;
+-- 
+2.9.3 (Apple Git-75)
+
