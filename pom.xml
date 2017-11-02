@@ -19,6 +19,7 @@
     <url>https://github.com/PaperSpigot/Spigot</url>
 
     <modules>
+        <module>OverMapped</module>
         <module>MinecraftServer</module>
         <module>MinecraftRelocate</module>
         <module>PaperSpigot-Server</module>
