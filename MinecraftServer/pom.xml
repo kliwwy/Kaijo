@@ -18,8 +18,8 @@
 
     <repositories>
         <repository>
-            <id>repobo-snap</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
+            <id>techcable-repo</id>
+            <url>https://repo.techcable.net/content/groups/public/</url>
         </repository>
     </repositories>
 
