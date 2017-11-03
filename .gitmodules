@@ -4,3 +4,6 @@
 [submodule "CraftBukkit"]
 	path = CraftBukkit
 	url = https://github.com/Zbob750/CraftBukkit.git
+[submodule "OverMapped"]
+	path = OverMapped
+	url = https://github.com/Wolvereness/OverMapped.git
