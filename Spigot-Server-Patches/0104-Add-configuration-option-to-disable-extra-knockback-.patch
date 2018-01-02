@@ -1,0 +1,40 @@
+From f7d6cfecfc24543f87445931026e610291fe2ead Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Tue, 2 Jan 2018 10:05:41 -0500
+Subject: [PATCH] Add configuration option to disable extra knockback from
+ player sprinting
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 4e21f55c..7bbaf2fe 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -924,7 +924,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+                     i += EnchantmentManager.getKnockbackEnchantmentLevel(this, (EntityLiving) entity);
+                 }
+ 
+-                if (this.isSprinting()) {
++                if (this.isSprinting() && !org.github.paperspigot.PaperSpigotConfig.disableSprintKnockback) {
+                     ++i;
+                 }
+ 
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 734ba4ca..b2482fe7 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -158,6 +158,12 @@ public class PaperSpigotConfig
+         }
+     }
+ 
++    public static boolean disableSprintKnockback;
++    private static void disableSprintKnockback()
++    {
++        disableSprintKnockback = getBoolean( "settings.disable-sprint-knockback", false );
++    }
++
+     public static boolean interactLimitEnabled;
+     private static void interactLimitEnabled()
+     {
+-- 
+2.15.1.windows.2
+
