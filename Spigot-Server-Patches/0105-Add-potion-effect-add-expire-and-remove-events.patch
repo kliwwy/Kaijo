@@ -1,0 +1,68 @@
+From 69f6d7a30b194c9a2f8d4de2303942805bb321df Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Thu, 4 Jan 2018 19:18:17 -0500
+Subject: [PATCH] Add potion effect add, expire and remove events
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index f78a2a02..37ef31ea 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -17,6 +17,11 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
+ // CraftBukkit end
+ 
+ import org.bukkit.craftbukkit.SpigotTimings; // Spigot
++import org.bukkit.event.entity.PotionEffectAddEvent;
++import org.bukkit.event.entity.PotionEffectExpireEvent;
++import org.bukkit.event.entity.PotionEffectRemoveEvent;
++import org.bukkit.potion.PotionEffect;
++import org.bukkit.potion.PotionEffectType;
+ 
+ public abstract class EntityLiving extends Entity {
+ 
+@@ -455,6 +460,9 @@ public abstract class EntityLiving extends Entity {
+ 
+             if (!mobeffect.tick(this)) {
+                 if (!this.world.isStatic) {
++                    PotionEffect effect = new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()), mobeffect.getDuration(), mobeffect.getAmplifier(), mobeffect.isAmbient());
++                    PotionEffectExpireEvent event = new PotionEffectExpireEvent((org.bukkit.entity.LivingEntity) getBukkitEntity(), effect);
++                    this.world.getServer().getPluginManager().callEvent(event);
+                     iterator.remove();
+                     this.b(mobeffect);
+                 }
+@@ -516,6 +524,10 @@ public abstract class EntityLiving extends Entity {
+             MobEffect mobeffect = (MobEffect) this.effects.get(integer);
+ 
+             if (!this.world.isStatic) {
++                // IPVP - Call PotionEffectRemoveEvent
++                PotionEffect effect = new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()), mobeffect.getDuration(), mobeffect.getAmplifier(), mobeffect.isAmbient());
++                PotionEffectRemoveEvent event = new PotionEffectRemoveEvent((org.bukkit.entity.LivingEntity) getBukkitEntity(), effect);
++                this.world.getServer().getPluginManager().callEvent(event);
+                 iterator.remove();
+                 this.b(mobeffect);
+             }
+@@ -542,6 +554,10 @@ public abstract class EntityLiving extends Entity {
+ 
+     public void addEffect(MobEffect mobeffect) {
+         if (this.d(mobeffect)) {
++            // IPVP - Call PotionEffectAddEvent
++            PotionEffect effect = new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()), mobeffect.getDuration(), mobeffect.getAmplifier(), mobeffect.isAmbient());
++            PotionEffectAddEvent event = new PotionEffectAddEvent((org.bukkit.entity.LivingEntity) getBukkitEntity(), effect);
++            this.world.getServer().getPluginManager().callEvent(event);
+             if (this.effects.containsKey(Integer.valueOf(mobeffect.getEffectId()))) {
+                 ((MobEffect) this.effects.get(Integer.valueOf(mobeffect.getEffectId()))).a(mobeffect);
+                 this.a((MobEffect) this.effects.get(Integer.valueOf(mobeffect.getEffectId())), true);
+@@ -572,6 +588,10 @@ public abstract class EntityLiving extends Entity {
+         MobEffect mobeffect = (MobEffect) this.effects.remove(Integer.valueOf(i));
+ 
+         if (mobeffect != null) {
++            // IPVP - Call PotionEffectRemoveEvent
++            PotionEffect effect = new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()), mobeffect.getDuration(), mobeffect.getAmplifier(), mobeffect.isAmbient());
++            PotionEffectRemoveEvent event = new PotionEffectRemoveEvent((org.bukkit.entity.LivingEntity) getBukkitEntity(), effect);
++            this.world.getServer().getPluginManager().callEvent(event);
+             this.b(mobeffect);
+         }
+     }
+-- 
+2.15.1.windows.2
+

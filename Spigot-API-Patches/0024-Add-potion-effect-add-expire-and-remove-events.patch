@@ -1,0 +1,142 @@
+From d5863afdcae906ecebaf52115ddc0441555599d6 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Thu, 4 Jan 2018 19:17:04 -0500
+Subject: [PATCH] Add potion effect add, expire and remove events
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectAddEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectAddEvent.java
+new file mode 100644
+index 00000000..aa2966fd
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectAddEvent.java
+@@ -0,0 +1,26 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.HandlerList;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect is removed from an entity
++ */
++public class PotionEffectAddEvent extends PotionEffectEvent {
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public PotionEffectAddEvent(final LivingEntity spawnee, final PotionEffect potionEffect) {
++        super(spawnee, potionEffect);
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectEvent.java
+new file mode 100644
+index 00000000..e5a626f2
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectEvent.java
+@@ -0,0 +1,31 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.HandlerList;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect is removed from an entity
++ */
++public abstract class PotionEffectEvent extends EntityEvent {
++
++    private final PotionEffect potionEffect;
++
++    public PotionEffectEvent(final LivingEntity spawnee, final PotionEffect potionEffect) {
++        super(spawnee);
++        this.potionEffect = potionEffect;
++    }
++
++    /**
++     * Returns the potion effect that is expiring
++     * @return
++     */
++    public PotionEffect getPotionEffect() {
++        return potionEffect;
++    }
++
++    @Override
++    public LivingEntity getEntity() {
++        return (LivingEntity) super.getEntity();
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectExpireEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectExpireEvent.java
+new file mode 100644
+index 00000000..8f1151d5
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectExpireEvent.java
+@@ -0,0 +1,26 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.HandlerList;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect is removed from an entity
++ */
++public class PotionEffectExpireEvent extends PotionEffectEvent {
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public PotionEffectExpireEvent(final LivingEntity spawnee, final PotionEffect potionEffect) {
++        super(spawnee, potionEffect);
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectRemoveEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectRemoveEvent.java
+new file mode 100644
+index 00000000..3fcc9d50
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectRemoveEvent.java
+@@ -0,0 +1,26 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.HandlerList;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect is removed from an entity
++ */
++public class PotionEffectRemoveEvent extends PotionEffectEvent {
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public PotionEffectRemoveEvent(final LivingEntity spawnee, final PotionEffect potionEffect) {
++        super(spawnee, potionEffect);
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.15.1.windows.2
+
