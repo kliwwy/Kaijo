@@ -1,0 +1,53 @@
+From 2b126679f8dbf0b36da4fe93c120f0fe9eea8605 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Fri, 5 Jan 2018 17:09:53 -0500
+Subject: [PATCH] Add configuration option to allow enderpearls go through
+ tripwire and open fence gates
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityEnderPearl.java b/src/main/java/net/minecraft/server/EntityEnderPearl.java
+index 346a1032..a21cf0e8 100644
+--- a/src/main/java/net/minecraft/server/EntityEnderPearl.java
++++ b/src/main/java/net/minecraft/server/EntityEnderPearl.java
+@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.entity.CraftEnderPearl;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.event.entity.EnderpearlLandEvent;
+ import org.bukkit.event.player.PlayerTeleportEvent;
++import org.github.paperspigot.PaperSpigotConfig;
+ // CraftBukkit end
+ 
+ public class EntityEnderPearl extends EntityProjectile {
+@@ -21,6 +22,13 @@ public class EntityEnderPearl extends EntityProjectile {
+     }
+ 
+     protected void a(MovingObjectPosition movingobjectposition) {
++        Block block = this.world.getType(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d);
++        if (!PaperSpigotConfig.enderpearlCollidesStringFenceGate) {
++            if (block == Blocks.TRIPWIRE || (block == Blocks.FENCE_GATE && BlockFenceGate.b(this.world.getData(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d)))) {
++                return;
++            }
++        }
++
+         if (movingobjectposition.entity != null) {
+             movingobjectposition.entity.damageEntity(DamageSource.projectile(this, this.getShooter()), 0.0F);
+         }
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index b2482fe7..00cf180e 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -164,6 +164,12 @@ public class PaperSpigotConfig
+         disableSprintKnockback = getBoolean( "settings.disable-sprint-knockback", false );
+     }
+ 
++    public static boolean enderpearlCollidesStringFenceGate;
++    private static void enderpearlCollidesStringFenceGate()
++    {
++        enderpearlCollidesStringFenceGate = getBoolean( "settings.enderpearl-collides-string-fence-gate", true );
++    }
++
+     public static boolean interactLimitEnabled;
+     private static void interactLimitEnabled()
+     {
+-- 
+2.15.1.windows.2
+
