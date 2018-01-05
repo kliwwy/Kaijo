@@ -1,0 +1,54 @@
+From 323fee339b174e0c7f4e3021f456982f7d7007e6 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Fri, 5 Jan 2018 11:31:49 -0500
+Subject: [PATCH] Update lastPlayed time when a player logs in
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index f2941a50..f9235222 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -27,6 +27,7 @@ import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+ import org.bukkit.TravelAgent;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerChangedWorldEvent;
+ import org.bukkit.event.player.PlayerPortalEvent;
+@@ -210,6 +211,8 @@ public abstract class PlayerList {
+             }
+         }
+ 
++        ((CraftPlayer) bukkitPlayer).connect();// IPVP - Update last login time
++
+         // CraftBukkit - Moved from above, added world
+         g.info(entityplayer.getName() + "[" + s1 + "] logged in with entity id " + entityplayer.getId() + " at ([" + entityplayer.world.worldData.getName() + "] " + entityplayer.locX + ", " + entityplayer.locY + ", " + entityplayer.locZ + ")");
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index e5376f0c..e53a8239 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1059,7 +1059,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         data.setInt("expToDrop", handle.expToDrop);
+         data.setBoolean("keepLevel", handle.keepLevel);
+         data.setLong("firstPlayed", getFirstPlayed());
+-        data.setLong("lastPlayed", System.currentTimeMillis());
++        data.setLong("lastPlayed", lastPlayed);
+         data.setLong("lastLogout", lastLogout);
+         data.setString("lastKnownName", handle.getName());
+     }
+@@ -1177,6 +1177,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return true;
+     }
+ 
++    public void connect() {
++        this.lastPlayed = System.currentTimeMillis();
++    }
++
+     public void disconnect(String reason) {
+         this.lastLogout = System.currentTimeMillis();
+         conversationTracker.abandonAllConversations();
+-- 
+2.15.1.windows.2
+
