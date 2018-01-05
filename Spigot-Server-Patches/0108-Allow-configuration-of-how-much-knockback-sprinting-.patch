@@ -1,0 +1,48 @@
+From 81368177c03e4f0999688bb71424a583233804a4 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Fri, 5 Jan 2018 18:17:23 -0500
+Subject: [PATCH] Allow configuration of how much knockback sprinting applies
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 7bbaf2fe..8d8aa722 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -916,7 +916,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+         if (entity.av()) {
+             if (!entity.j(this)) {
+                 float f = (float) this.getAttributeInstance(GenericAttributes.e).getValue();
+-                int i = 0;
++                float i = 0;
+                 float f1 = 0.0F;
+ 
+                 if (entity instanceof EntityLiving) {
+@@ -925,7 +925,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+                 }
+ 
+                 if (this.isSprinting() && !org.github.paperspigot.PaperSpigotConfig.disableSprintKnockback) {
+-                    ++i;
++                    i += org.github.paperspigot.PaperSpigotConfig.extraSprintKnockback;
+                 }
+ 
+                 if (f > 0.0F || f1 > 0.0F) {
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 00cf180e..7277d18b 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -164,6 +164,12 @@ public class PaperSpigotConfig
+         disableSprintKnockback = getBoolean( "settings.disable-sprint-knockback", false );
+     }
+ 
++    public static float extraSprintKnockback;
++    private static void extraSprintKnockback()
++    {
++        extraSprintKnockback = getFloat( "settings.extra-sprint-knockback", 1.0F );
++    }
++
+     public static boolean enderpearlCollidesStringFenceGate;
+     private static void enderpearlCollidesStringFenceGate()
+     {
+-- 
+2.15.1.windows.2
+
