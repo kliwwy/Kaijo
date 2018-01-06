@@ -1,0 +1,23 @@
+From 03dce666ecb13e2a3719e15538f98f1d952e70c1 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Sat, 6 Jan 2018 12:27:12 -0500
+Subject: [PATCH] Don't ignore negated permissions when broadcasting command
+ messages
+
+
+diff --git a/src/main/java/org/bukkit/command/Command.java b/src/main/java/org/bukkit/command/Command.java
+index 31e4f667..50e59f01 100644
+--- a/src/main/java/org/bukkit/command/Command.java
++++ b/src/main/java/org/bukkit/command/Command.java
+@@ -380,7 +380,7 @@ public abstract class Command {
+         }
+ 
+         for (Permissible user : users) {
+-            if (user instanceof CommandSender) {
++            if (user instanceof CommandSender && user.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)) {
+                 CommandSender target = (CommandSender) user;
+ 
+                 if (target instanceof ConsoleCommandSender) {
+-- 
+2.15.1.windows.2
+
