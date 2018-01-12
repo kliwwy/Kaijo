@@ -1,0 +1,39 @@
+From 7832f98b590cf07e35b1089b6d90e9b06445080b Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Thu, 11 Jan 2018 20:02:08 -0500
+Subject: [PATCH] Expand EnderpearlLandEvent to allow cancellation and getting
+ hit Entity
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityEnderPearl.java b/src/main/java/net/minecraft/server/EntityEnderPearl.java
+index a21cf0e8b..c78d38cc8 100644
+--- a/src/main/java/net/minecraft/server/EntityEnderPearl.java
++++ b/src/main/java/net/minecraft/server/EntityEnderPearl.java
+@@ -3,6 +3,7 @@ package net.minecraft.server;
+ // CraftBukkit start
+ import org.bukkit.Bukkit;
+ import org.bukkit.craftbukkit.entity.CraftEnderPearl;
++import org.bukkit.craftbukkit.entity.CraftEntity;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.event.entity.EnderpearlLandEvent;
+ import org.bukkit.event.player.PlayerTeleportEvent;
+@@ -52,9 +53,15 @@ public class EntityEnderPearl extends EntityProjectile {
+                     org.bukkit.craftbukkit.entity.CraftPlayer player = entityplayer.getBukkitEntity();
+ 
+                     EnderpearlLandEvent.Reason reason = movingobjectposition.entity != null ? EnderpearlLandEvent.Reason.ENTITY : EnderpearlLandEvent.Reason.BLOCK;
+-                    EnderpearlLandEvent landEvent = new EnderpearlLandEvent((CraftEnderPearl) getBukkitEntity(), reason);
++                    CraftEntity bukkitHitEntity = movingobjectposition.entity != null ? movingobjectposition.entity.getBukkitEntity() : null;
++                    EnderpearlLandEvent landEvent = new EnderpearlLandEvent((CraftEnderPearl) getBukkitEntity(), reason, bukkitHitEntity);
+                     Bukkit.getPluginManager().callEvent(landEvent);
+ 
++                    if (landEvent.isCancelled()) {
++                        this.die();
++                        return;
++                    }
++
+                     org.bukkit.Location location = getBukkitEntity().getLocation();
+                     location.setPitch(player.getLocation().getPitch());
+                     location.setYaw(player.getLocation().getYaw());
+-- 
+2.15.1.windows.2
+

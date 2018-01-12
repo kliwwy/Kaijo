@@ -1,0 +1,84 @@
+From dd98a2c74743de9c806c67542d635e933e2c347d Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Thu, 11 Jan 2018 20:01:06 -0500
+Subject: [PATCH] Expand EnderpearlLandEvent to allow cancellation and getting
+ hit Entity
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/EnderpearlLandEvent.java b/src/main/java/org/bukkit/event/entity/EnderpearlLandEvent.java
+index 6af78b49..817ec166 100644
+--- a/src/main/java/org/bukkit/event/entity/EnderpearlLandEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EnderpearlLandEvent.java
+@@ -1,27 +1,50 @@
+ package org.bukkit.event.entity;
+ 
+ import org.bukkit.entity.EnderPearl;
++import org.bukkit.entity.Entity;
++import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+ 
+-public class EnderpearlLandEvent extends EntityEvent {
++public class EnderpearlLandEvent extends EntityEvent implements Cancellable {
+ 
+     private static final HandlerList handlers = new HandlerList();
+     private final Reason reason;
++    private final Entity hit;
++    private boolean cancel;
+ 
+     public EnderpearlLandEvent(final EnderPearl enderPearl, final Reason reason) {
++        this(enderPearl, reason, null);
++    }
++
++    public EnderpearlLandEvent(final EnderPearl enderPearl, final Reason reason, final Entity hit) {
+         super(enderPearl);
+         this.reason = reason;
++        this.hit = hit;
+     }
+ 
+     @Override
+     public EnderPearl getEntity() {
+         return (EnderPearl) entity;
+     }
+-    
++
++    /**
++     * Returns the reason for the Enderpearl landing
++     *
++     * @return Reason the Enderpearl landed
++     */
+     public Reason getReason() {
+         return reason;
+     }
+ 
++    /**
++     * Returns the entity that was hit by the Enderpearl
++     *
++     * @return Entity hit
++     */
++    public Entity getHit() {
++        return hit;
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+@@ -31,6 +54,16 @@ public class EnderpearlLandEvent extends EntityEvent {
+         return handlers;
+     }
+ 
++    @Override
++    public boolean isCancelled() {
++        return cancel;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancel = cancel;
++    }
++
+     public enum Reason {
+         /**
+          * Called when the pearl hits a block
+-- 
+2.15.1.windows.2
+
