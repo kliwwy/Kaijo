@@ -1,0 +1,23 @@
+From 8583745cecfc1d6f2e960a0ce836a6ca1f81662d Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Fri, 12 Jan 2018 17:34:12 -0500
+Subject: [PATCH] Don't randomize damage reduction values from protection
+ enchantments
+
+
+diff --git a/src/main/java/net/minecraft/server/EnchantmentManager.java b/src/main/java/net/minecraft/server/EnchantmentManager.java
+index 9e109a134..b04e7504e 100644
+--- a/src/main/java/net/minecraft/server/EnchantmentManager.java
++++ b/src/main/java/net/minecraft/server/EnchantmentManager.java
+@@ -137,7 +137,7 @@ public class EnchantmentManager {
+             b.a = 25;
+         }
+ 
+-        return (b.a + 1 >> 1) + random.nextInt((b.a >> 1) + 1);
++        return b.a;
+     }
+ 
+     public static float a(EntityLiving entityliving, EntityLiving entityliving1) {
+-- 
+2.15.1.windows.2
+
