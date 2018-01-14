@@ -1,0 +1,22 @@
+From 0fa05bf989755c2d14ff600ac0cc4f9a9770dae5 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Sat, 13 Jan 2018 22:00:12 -0500
+Subject: [PATCH] Always apply player attacks even if damage is 0 or below
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 8d8aa722f..4621d1e20 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -928,7 +928,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+                     i += org.github.paperspigot.PaperSpigotConfig.extraSprintKnockback;
+                 }
+ 
+-                if (f > 0.0F || f1 > 0.0F) {
++                if (true) {
+                     boolean flag = !world.paperSpigotConfig.disablePlayerCrits && this.fallDistance > 0.0F && !this.onGround && !this.h_() && !this.M() && !this.hasEffect(MobEffectList.BLINDNESS) && this.vehicle == null && entity instanceof EntityLiving;
+ 
+                     if (flag && f > 0.0F) {
+-- 
+2.15.1.windows.2
+
