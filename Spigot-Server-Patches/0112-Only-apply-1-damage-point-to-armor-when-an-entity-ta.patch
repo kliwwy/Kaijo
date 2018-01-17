@@ -1,0 +1,23 @@
+From fb339d9849e847d945e1ef52383d01df37dc35f8 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Tue, 16 Jan 2018 20:33:45 -0500
+Subject: [PATCH] Only apply 1 damage point to armor when an entity takes
+ damage
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 37ef31ea8..bf67d90ef 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -1077,7 +1077,7 @@ public abstract class EntityLiving extends Entity {
+             // Apply damage to armor
+             if (!damagesource.ignoresArmor()) {
+                 float armorDamage = (float) (event.getDamage() + event.getDamage(DamageModifier.BLOCKING) + event.getDamage(DamageModifier.HARD_HAT));
+-                this.damageArmor(armorDamage);
++                this.damageArmor(1);
+             }
+ 
+             absorptionModifier = (float) -event.getDamage(DamageModifier.ABSORPTION);
+-- 
+2.15.1.windows.2
+
