@@ -1,0 +1,32 @@
+From 9e690ded3d27129ab7821038d04c83996c8fdf3d Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Wed, 31 Jan 2018 19:41:01 -0500
+Subject: [PATCH] Use ConcurrentHashMap for EntityLiving effects
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index bf67d90ef..efb57695b 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -9,6 +9,9 @@ import java.util.UUID;
+ 
+ // CraftBukkit start
+ import java.util.ArrayList;
++import java.util.Map;
++import java.util.concurrent.ConcurrentHashMap;
++
+ import com.google.common.base.Function;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.event.entity.EntityDamageEvent;
+@@ -29,7 +32,7 @@ public abstract class EntityLiving extends Entity {
+     private static final AttributeModifier c = (new AttributeModifier(b, "Sprinting speed boost", 0.30000001192092896D, 2)).a(false);
+     private AttributeMapBase d;
+     public CombatTracker combatTracker = new CombatTracker(this); // CraftBukkit - private -> public, remove final
+-    public final HashMap effects = new HashMap(); // CraftBukkit - protected -> public
++    public final Map effects = new ConcurrentHashMap(); // CraftBukkit - protected -> public
+     private final ItemStack[] g = new ItemStack[5];
+     public boolean at;
+     public int au;
+-- 
+2.15.1.windows.2
+
