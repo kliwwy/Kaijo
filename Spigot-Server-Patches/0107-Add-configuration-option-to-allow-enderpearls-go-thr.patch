@@ -1,4 +1,4 @@
-From 2b126679f8dbf0b36da4fe93c120f0fe9eea8605 Mon Sep 17 00:00:00 2001
+From 80fd93170bae4c9eecbcbc47d7f95be4eb799cad Mon Sep 17 00:00:00 2001
 From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
 Date: Fri, 5 Jan 2018 17:09:53 -0500
 Subject: [PATCH] Add configuration option to allow enderpearls go through
@@ -6,25 +6,54 @@ Subject: [PATCH] Add configuration option to allow enderpearls go through
 
 
 diff --git a/src/main/java/net/minecraft/server/EntityEnderPearl.java b/src/main/java/net/minecraft/server/EntityEnderPearl.java
-index 346a1032..a21cf0e8 100644
+index 346a10325..36d6c6331 100644
 --- a/src/main/java/net/minecraft/server/EntityEnderPearl.java
 +++ b/src/main/java/net/minecraft/server/EntityEnderPearl.java
-@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.entity.CraftEnderPearl;
+@@ -6,6 +6,10 @@ import org.bukkit.craftbukkit.entity.CraftEnderPearl;
  import org.bukkit.craftbukkit.event.CraftEventFactory;
  import org.bukkit.event.entity.EnderpearlLandEvent;
  import org.bukkit.event.player.PlayerTeleportEvent;
++import org.bukkit.material.Gate;
++import org.bukkit.util.BlockIterator;
++import org.bukkit.util.Vector;
 +import org.github.paperspigot.PaperSpigotConfig;
  // CraftBukkit end
  
  public class EntityEnderPearl extends EntityProjectile {
-@@ -21,6 +22,13 @@ public class EntityEnderPearl extends EntityProjectile {
+@@ -21,6 +25,39 @@ public class EntityEnderPearl extends EntityProjectile {
      }
  
      protected void a(MovingObjectPosition movingobjectposition) {
-+        Block block = this.world.getType(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d);
 +        if (!PaperSpigotConfig.enderpearlCollidesStringFenceGate) {
-+            if (block == Blocks.TRIPWIRE || (block == Blocks.FENCE_GATE && BlockFenceGate.b(this.world.getData(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d)))) {
++            Block block = this.world.getType(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d);
++
++            if (block == Blocks.TRIPWIRE) {
 +                return;
++            } else if (block == Blocks.FENCE_GATE) {
++                BlockIterator bi = null;
++
++                try {
++                    Vector l = new Vector(this.locX, this.locY, this.locZ);
++                    Vector l2 = new Vector(this.locX + this.motX, this.locY + this.motY, this.locZ + this.motZ);
++                    Vector dir = new Vector(l2.getX() - l.getX(), l2.getY() - l.getY(), l2.getZ() - l.getZ()).normalize();
++                    bi = new BlockIterator(this.world.getWorld(), l, dir, 0, 1);
++                } catch (IllegalStateException e) {
++                    // Do nothing
++                }
++
++                if (bi != null) {
++                    boolean open = true;
++                    while (bi.hasNext()) {
++                        org.bukkit.block.Block b = bi.next();
++                        if (b.getState().getData() instanceof Gate && !((Gate) b.getState().getData()).isOpen()) {
++                            open = false;
++                            break;
++                        }
++                    }
++                    if (open) {
++                        return;
++                    }
++                }
 +            }
 +        }
 +
@@ -32,7 +61,7 @@ index 346a1032..a21cf0e8 100644
              movingobjectposition.entity.damageEntity(DamageSource.projectile(this, this.getShooter()), 0.0F);
          }
 diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
-index b2482fe7..00cf180e 100644
+index b2482fe78..00cf180e5 100644
 --- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
 +++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
 @@ -164,6 +164,12 @@ public class PaperSpigotConfig
