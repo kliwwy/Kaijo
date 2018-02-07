@@ -1,0 +1,22 @@
+From bd1ccb3021fdc43d75a9f74edc9dfd37b1d200f0 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Wed, 7 Feb 2018 18:47:29 -0500
+Subject: [PATCH] Format GameProfile when outputting disconnection messages
+
+
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+index bd254def8..79de68927 100644
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -125,7 +125,7 @@ public class LoginListener implements PacketLoginInListener {
+     }
+ 
+     public String getName() {
+-        return this.i != null ? this.i.toString() + " (" + this.networkManager.getSocketAddress().toString() + ")" : String.valueOf(this.networkManager.getSocketAddress());
++        return this.i != null ? "[" + this.i.getName() + ", " + this.i.getId() + "]" + " (" + this.networkManager.getSocketAddress().toString() + ")" : String.valueOf(this.networkManager.getSocketAddress());
+     }
+ 
+     public void a(EnumProtocol enumprotocol, EnumProtocol enumprotocol1) {
+-- 
+2.16.1.windows.3
+
