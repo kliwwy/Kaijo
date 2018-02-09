@@ -1,0 +1,198 @@
+From 8f54cb4c0e8eb3f1329f9de8d062bbfe08882df1 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Fri, 9 Feb 2018 11:46:19 -0500
+Subject: [PATCH] Add bounding box and dimension API for entities and blocks
+
+
+diff --git a/src/main/java/org/bukkit/AxisAlignedBB.java b/src/main/java/org/bukkit/AxisAlignedBB.java
+new file mode 100644
+index 00000000..3b2c6b4e
+--- /dev/null
++++ b/src/main/java/org/bukkit/AxisAlignedBB.java
+@@ -0,0 +1,111 @@
++package org.bukkit;
++
++/**
++ * A static representation of the bounding box of some Entity or Block
++ */
++public class AxisAlignedBB {
++
++    private final double minX;
++    private final double minY;
++    private final double minZ;
++    private final double maxX;
++    private final double maxY;
++    private final double maxZ;
++
++    public AxisAlignedBB(double minX, double minY, double minZ,
++                         double maxX, double maxY, double maxZ) {
++        this.minX = minX;
++        this.minY = minY;
++        this.minZ = minZ;
++        this.maxX = maxX;
++        this.maxY = maxY;
++        this.maxZ = maxZ;
++    }
++
++    /**
++     * Gets the minimum x-coordinate of this bounding box.
++     *
++     * @return minimum x-coordinate
++     */
++    public double getMinX() {
++        return minX;
++    }
++
++    /**
++     * Gets the minimum y-coordinate of this bounding box.
++     *
++     * @return minimum y-coordinate
++     */
++    public double getMinY() {
++        return minY;
++    }
++
++    /**
++     * Gets the minimum z-coordinate of this bounding box.
++     *
++     * @return minimum z-coordinate
++     */
++    public double getMinZ() {
++        return minZ;
++    }
++
++    /**
++     * Gets the maximum x-coordinate of this bounding box.
++     *
++     * @return maximum x-coordinate
++     */
++    public double getMaxX() {
++        return maxX;
++    }
++
++    /**
++     * Gets the maximum y-coordinate of this bounding box.
++     *
++     * @return maximum y-coordinate
++     */
++    public double getMaxY() {
++        return maxY;
++    }
++
++    /**
++     * Gets the minimum z-coordinate of this bounding box.
++     *
++     * @return maximum z-coordinate
++     */
++    public double getMaxZ() {
++        return maxZ;
++    }
++
++    @Override
++    public int hashCode() {
++        int hash = 3;
++        hash = 19 * hash + (int) (Double.doubleToLongBits(this.minX) ^ (Double.doubleToLongBits(this.minX) >>> 32));
++        hash = 19 * hash + (int) (Double.doubleToLongBits(this.minY) ^ (Double.doubleToLongBits(this.minY) >>> 32));
++        hash = 19 * hash + (int) (Double.doubleToLongBits(this.minZ) ^ (Double.doubleToLongBits(this.minZ) >>> 32));
++        hash = 19 * hash + (int) (Double.doubleToLongBits(this.maxX) ^ (Double.doubleToLongBits(this.maxX) >>> 32));
++        hash = 19 * hash + (int) (Double.doubleToLongBits(this.maxY) ^ (Double.doubleToLongBits(this.maxY) >>> 32));
++        hash = 19 * hash + (int) (Double.doubleToLongBits(this.maxZ) ^ (Double.doubleToLongBits(this.maxZ) >>> 32));
++        return hash;
++    }
++
++    @Override
++    public boolean equals(Object other) {
++        if  (other == this) {
++            return true;
++        } else if (!(other instanceof AxisAlignedBB)) {
++            return false;
++        }
++        AxisAlignedBB aabb = (AxisAlignedBB) other;
++        return Double.compare(aabb.minX, minX) == 0
++                && Double.compare(aabb.minY, minY) == 0
++                && Double.compare(aabb.minZ, minZ) == 0
++                && Double.compare(aabb.maxX, maxX) == 0
++                && Double.compare(aabb.maxY, maxY) == 0
++                && Double.compare(aabb.maxZ, maxZ) == 0;
++    }
++
++    @Override
++    public String toString() {
++        return "AxisAlignedBB[" + minX + ", " + minY + ", " + minZ + " -> " + maxX + ", " + maxY + ", " + maxZ + "]";
++    }
++}
+diff --git a/src/main/java/org/bukkit/block/Block.java b/src/main/java/org/bukkit/block/Block.java
+index 4a53109a..d7db0d22 100644
+--- a/src/main/java/org/bukkit/block/Block.java
++++ b/src/main/java/org/bukkit/block/Block.java
+@@ -2,6 +2,7 @@ package org.bukkit.block;
+ 
+ import java.util.Collection;
+ 
++import org.bukkit.AxisAlignedBB;
+ import org.bukkit.Chunk;
+ import org.bukkit.Material;
+ import org.bukkit.World;
+@@ -135,6 +136,13 @@ public interface Block extends Metadatable {
+      */
+     int getZ();
+ 
++    /**
++     * Returns the bounding box of the block
++     *
++     * @return Bounding box of block
++     */
++    AxisAlignedBB getBoundingBox();
++
+     /**
+      * Gets the Location of the block
+      *
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index 5a1e895f..cc1d5339 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.entity;
+ 
++import org.bukkit.AxisAlignedBB;
+ import org.bukkit.Location;
+ import org.bukkit.EntityEffect;
+ import org.bukkit.Server;
+@@ -17,6 +18,34 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+  */
+ public interface Entity extends Metadatable {
+ 
++    /**
++     * Returns the entity's current bounding box
++     *
++     * @return a new copy of AxisAlignedBB containing the bounding box of this entity
++     */
++    public AxisAlignedBB getBoundingBox();
++
++    /**
++     * Gets the entity's height
++     *
++     * @return height
++     */
++    public float getHeight();
++
++    /**
++     * Gets the entity's width
++     *
++     * @return width
++     */
++    public float getWidth();
++
++    /**
++     * Gets the entity's length
++     *
++     * @return length
++     */
++    public float getLength();
++
+     /**
+      * Gets the entity's current position
+      *
+-- 
+2.16.1.windows.3
+

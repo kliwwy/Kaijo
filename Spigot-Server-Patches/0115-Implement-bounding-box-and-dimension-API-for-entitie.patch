@@ -1,0 +1,86 @@
+From 519017f9553395a5b5879925306ac65da37841d6 Mon Sep 17 00:00:00 2001
+From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
+Date: Fri, 9 Feb 2018 11:46:33 -0500
+Subject: [PATCH] Implement bounding box and dimension API for entities and
+ blocks
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+index 87d79aec1..df832f382 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -15,6 +15,7 @@ import net.minecraft.server.Item;
+ import net.minecraft.server.NBTTagCompound;
+ import net.minecraft.server.TileEntitySkull;
+ 
++import org.bukkit.AxisAlignedBB;
+ import org.bukkit.Chunk;
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+@@ -25,6 +26,7 @@ import org.bukkit.block.BlockFace;
+ import org.bukkit.block.BlockState;
+ import org.bukkit.block.PistonMoveReaction;
+ import org.bukkit.craftbukkit.CraftChunk;
++import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.inventory.ItemStack;
+@@ -59,6 +61,15 @@ public class CraftBlock implements Block {
+         return chunk.getWorld();
+     }
+ 
++    @Override
++    public AxisAlignedBB getBoundingBox() {
++        net.minecraft.server.Block nms = getNMSBlock();
++        Location location = getLocation();
++        net.minecraft.server.AxisAlignedBB aabb = nms.a(((CraftWorld) location.getWorld()).getHandle(),
++                location.getBlockX(), location.getBlockY(), location.getBlockZ());
++        return aabb == null ? null : new AxisAlignedBB(aabb.a, aabb.b, aabb.c, aabb.d, aabb.e, aabb.f);
++    }
++
+     public Location getLocation() {
+         return new Location(getWorld(), x, y, z);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 1c8099d37..55ab53ad5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -5,6 +5,7 @@ import java.util.UUID;
+ 
+ import net.minecraft.server.*;
+ 
++import org.bukkit.AxisAlignedBB;
+ import org.bukkit.EntityEffect;
+ import org.bukkit.Location;
+ import org.bukkit.Server;
+@@ -157,6 +158,27 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         throw new AssertionError("Unknown entity " + entity == null ? null : entity.getClass());
+     }
+ 
++    @Override
++    public AxisAlignedBB getBoundingBox() {
++        return new AxisAlignedBB(entity.boundingBox.a, entity.boundingBox.b, entity.boundingBox.c,
++                entity.boundingBox.d, entity.boundingBox.e, entity.boundingBox.f);
++    }
++
++    @Override
++    public float getHeight() {
++        return entity.height;
++    }
++
++    @Override
++    public float getWidth() {
++        return entity.width;
++    }
++
++    @Override
++    public float getLength() {
++        return entity.length;
++    }
++
+     public Location getLocation() {
+         return new Location(getWorld(), entity.locX, entity.locY, entity.locZ, entity.yaw, entity.pitch);
+     }
+-- 
+2.16.1.windows.3
+
