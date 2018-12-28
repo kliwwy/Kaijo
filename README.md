@@ -1,4 +1,4 @@
-# Kaijo PaperSpigot 1.7 Fork #
+# Kaijo PaperSpigot 1.7.10 Fork #
 <p>This is the primary repository for the Kaijo PaperSpigot 1.7.10 software. PaperSpigot is a high performance 
 Spigot fork that aims to fix gameplay and mechanics inconsistencies. I will not continue to update this, development is finished. This was created for kPractice and to be similar to Kohi.</p>
 
@@ -9,7 +9,7 @@ Modifications Include
 - Players that are hidden can't see projectiles or receive potion splash effects from players that have them hidden. 
 - Most of the command colors are changed to represent Kohi's aesthetic. 
 - Console broadcast has been changed. 
-- Version name is renamed to "Kaijo" (getAlternateVersion). 
+- Version name is renamed to "Kaijo" (getVersionName). 
 - Knockback is patched from prplz's code (https://gist.github.com/prplz/88058283059dd46c8208c8a918c65bb8).
 
 
