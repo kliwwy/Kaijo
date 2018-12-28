@@ -1,0 +1,35 @@
+From 7b0fa74a80d55dead34c4a79076cbd4001a81c00 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 28 Dec 2018 13:36:37 -0500
+Subject: [PATCH] Changed-Version-Name
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index fc0e508f..09e36a99 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -87,7 +87,7 @@ public final class Bukkit {
+ 
+     public static String getVersionName()
+     {
+-        return "Kaijo";
++        return server.getVersionName();
+     }
+ 
+     /**
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 1b5adf86..a0d7737c 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -86,6 +86,8 @@ public interface Server extends PluginMessageRecipient {
+      */
+     public String getBukkitVersion();
+ 
++    public String getVersionName();
++
+     /**
+      * Gets an array copy of all currently logged in players.
+      * <p>
+-- 
+2.13.0.windows.1
+

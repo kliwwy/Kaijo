@@ -1,0 +1,25 @@
+From 3c66fdb99eedc1375ef004860eb078b93ba7ed64 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 28 Dec 2018 13:29:11 -0500
+Subject: [PATCH] Changed-Version-Name
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 54ea9d77..fc0e508f 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -85,6 +85,11 @@ public final class Bukkit {
+         return server.getVersion();
+     }
+ 
++    public static String getVersionName()
++    {
++        return "Kaijo";
++    }
++
+     /**
+      * @see Server#getBukkitVersion()
+      */
+-- 
+2.13.0.windows.1
+
