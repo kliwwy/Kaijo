@@ -1,0 +1,59 @@
+From f753fd6448db11d19949a2300e6d50a9b773b2a9 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Wed, 29 Aug 2018 02:04:57 -0400
+Subject: [PATCH] Players-always-display-on-tablist
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index f9235222..7ce3db7a 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -327,15 +327,13 @@ public abstract class PlayerList {
+         for (int i = 0; i < this.players.size(); ++i) {
+             EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+ 
+-            if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+-                entityplayer1.playerConnection.sendPacket(packet);
+-                // Spigot start - protocol patch
+-                if ( !entityplayer.getName().equals( entityplayer.listName ) && entityplayer1.playerConnection.networkManager.getVersion() > 28 )
+-                {
+-                    entityplayer1.playerConnection.sendPacket( displayPacket );
+-                }
+-                // Spigot end
++            entityplayer1.playerConnection.sendPacket(packet);
++            // Spigot start - protocol patch
++            if ( !entityplayer.getName().equals( entityplayer.listName ) && entityplayer1.playerConnection.networkManager.getVersion() > 28 )
++            {
++                entityplayer1.playerConnection.sendPacket( displayPacket );
+             }
++            // Spigot end
+         }
+         // CraftBukkit end
+ 
+@@ -343,9 +341,6 @@ public abstract class PlayerList {
+             EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+ 
+             // CraftBukkit start
+-            if (!entityplayer.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
+-                continue;
+-            }
+             // .name -> .listName
+             entityplayer.playerConnection.sendPacket(PacketPlayOutPlayerInfo.addPlayer( entityplayer1 )); // Spigot - protocol patch
+             // Spigot start - protocol patch
+@@ -395,11 +390,8 @@ public abstract class PlayerList {
+         for (int i = 0; i < this.players.size(); ++i) {
+             EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+ 
+-            if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+-                entityplayer1.playerConnection.sendPacket(packet);
+-            } else {
+-                entityplayer1.getBukkitEntity().removeDisconnectingPlayer(entityplayer.getBukkitEntity());
+-            }
++            entityplayer1.playerConnection.sendPacket(packet);
++            entityplayer1.getBukkitEntity().removeDisconnectingPlayer(entityplayer.getBukkitEntity());
+         }
+         // This removes the scoreboard (and player reference) for the specific player in the manager
+         this.cserver.getScoreboardManager().removePlayer(entityplayer.getBukkitEntity());
+-- 
+2.13.0.windows.1
+

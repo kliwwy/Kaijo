@@ -1,0 +1,34 @@
+From cc1f0ebc9326a13c284935e522b67fac3b8d3393 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 06:39:51 -0400
+Subject: [PATCH] Modified-ReloadCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
+index a08ae804..012fd80f 100644
+--- a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
+@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
+ 
+ public class ReloadCommand extends BukkitCommand {
+     public ReloadCommand(String name) {
+@@ -18,7 +19,11 @@ public class ReloadCommand extends BukkitCommand {
+ 
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+-        if (!testPermission(sender)) return true;
++        if(sender instanceof Player)
++        {
++            sender.sendMessage(ChatColor.RED + "Only console can perform this command.");
++            return false;
++        }
+ 
+         Bukkit.reload();
+         Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Reload complete.");
+-- 
+2.13.0.windows.1
+

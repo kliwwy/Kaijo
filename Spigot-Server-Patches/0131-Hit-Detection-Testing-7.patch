@@ -1,0 +1,22 @@
+From a791993a4900e4a08921357ff0d6edd32e65e9d2 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 20:08:24 -0500
+Subject: [PATCH] Hit-Detection-Testing-7
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 9da1d1ba..800983c8 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -559,7 +559,7 @@ public class CraftEventFactory {
+                 Vector toEntity = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(eye.toVector());
+                 double distance = ((CraftPlayer)damager.getBukkitEntity()).getLocation().distance(((CraftPlayer)damagee.getBukkitEntity()).getLocation());
+                 double dot = toEntity.normalize().dot(eye.getDirection());
+-                ((CraftPlayer)damager.getBukkitEntity()).sendMessage("successful hit, distance: " + distance + ", dot: " + dot);
++                Bukkit.broadcastMessage(((CraftPlayer)damager.getBukkitEntity()).getName() + " hit: distance: " + distance + ", accuracy: " + dot + "%");
+             }
+         }
+ 
+-- 
+2.13.0.windows.1
+

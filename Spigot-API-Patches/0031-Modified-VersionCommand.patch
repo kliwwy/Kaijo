@@ -1,0 +1,25 @@
+From 7ae77a2c8ff4969cf60a4787f407703f2082d97f Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 06:39:20 -0400
+Subject: [PATCH] Modified-VersionCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/VersionCommand.java b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+index 902f9d15..5f7a5e21 100644
+--- a/src/main/java/org/bukkit/command/defaults/VersionCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+@@ -26,10 +26,8 @@ public class VersionCommand extends BukkitCommand {
+ 
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+-        if (!testPermission(sender)) return true;
+-
+         if (args.length == 0) {
+-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
++            sender.sendMessage(ChatColor.YELLOW + "This server is currently running " + ChatColor.GREEN + "kSpigot" + ChatColor.YELLOW + ".");
+         } else {
+             StringBuilder name = new StringBuilder();
+ 
+-- 
+2.13.0.windows.1
+

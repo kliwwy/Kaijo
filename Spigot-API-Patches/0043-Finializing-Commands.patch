@@ -1,0 +1,40 @@
+From d67bdeab90f1baedb4e81f17a031c0db1fc9df2d Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 23:32:59 -0500
+Subject: [PATCH] Finializing-Commands
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/KillCommand.java b/src/main/java/org/bukkit/command/defaults/KillCommand.java
+index 5adc0759..aa9f0246 100644
+--- a/src/main/java/org/bukkit/command/defaults/KillCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/KillCommand.java
+@@ -25,10 +25,10 @@ public class KillCommand extends VanillaCommand {
+         if (!testPermission(sender)) return true;
+ 
+         if (sender instanceof Player) {
+-            Player player = (Player) sender;
+-            if(args.length >= 1)
++            Player player = null;
++            if(args.length > 0)
+             {
+-                Player target = Bukkit.getPlayer(args[0]);
++                Player target = Bukkit.getPlayerExact(args[0]);
+                 if(target != null) player = target;
+                 else
+                 {
+diff --git a/src/main/java/org/bukkit/command/defaults/TellCommand.java b/src/main/java/org/bukkit/command/defaults/TellCommand.java
+index fc49207a..7db2792e 100644
+--- a/src/main/java/org/bukkit/command/defaults/TellCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/TellCommand.java
+@@ -36,7 +36,7 @@ public class TellCommand extends VanillaCommand {
+                 if (i > 1) message.append(" ");
+                 message.append(args[i]);
+             }
+-
++            
+             String result = ChatColor.GRAY + sender.getName() + " whispers " + message;
+ 
+             sender.sendMessage("[" + sender.getName() + "->" + player.getName() + "] " + message);
+-- 
+2.13.0.windows.1
+

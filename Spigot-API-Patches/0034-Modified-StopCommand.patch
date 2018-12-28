@@ -1,0 +1,36 @@
+From a6eec69a047841866d2f2787b61e5ec9e336a3e7 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 06:40:40 -0400
+Subject: [PATCH] Modified-StopCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/StopCommand.java b/src/main/java/org/bukkit/command/defaults/StopCommand.java
+index be70e63e..830fc4ad 100644
+--- a/src/main/java/org/bukkit/command/defaults/StopCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/StopCommand.java
+@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
+ import org.apache.commons.lang.Validate;
+ 
+ import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+@@ -22,9 +23,11 @@ public class StopCommand extends VanillaCommand {
+ 
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+-        if (!testPermission(sender)) return true;
+-
+-        Command.broadcastCommandMessage(sender, "Stopping the server..");
++        if(sender instanceof Player)
++        {
++            sender.sendMessage(ChatColor.RED + "Only console can perform this command.");
++            return false;
++        }
+         Bukkit.shutdown();
+ 
+         String reason = this.createString(args, 0);
+-- 
+2.13.0.windows.1
+

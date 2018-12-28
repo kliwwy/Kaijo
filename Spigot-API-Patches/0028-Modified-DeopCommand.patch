@@ -1,0 +1,26 @@
+From 610942e19774d48e298d8b193f5c78f766bd246f Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 06:38:28 -0400
+Subject: [PATCH] Modified-DeopCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/DeopCommand.java b/src/main/java/org/bukkit/command/defaults/DeopCommand.java
+index c46750a7..c8642eb3 100644
+--- a/src/main/java/org/bukkit/command/defaults/DeopCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/DeopCommand.java
+@@ -24,7 +24,11 @@ public class DeopCommand extends VanillaCommand {
+ 
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+-        if (!testPermission(sender)) return true;
++        if(sender instanceof Player)
++        {
++            sender.sendMessage(ChatColor.RED + "Only console can perform this command.");
++            return false;
++        }
+         if (args.length != 1 || args[0].length() == 0) {
+             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+             return false;
+-- 
+2.13.0.windows.1
+

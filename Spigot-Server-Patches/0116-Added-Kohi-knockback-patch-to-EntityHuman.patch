@@ -1,0 +1,50 @@
+From 6c60a170bdc27f6161faee17ec9c5640f5eda055 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Thu, 23 Aug 2018 18:06:11 -0400
+Subject: [PATCH] Added-Kohi-knockback-patch-to-EntityHuman
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 4621d1e2..d27a327b 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -10,11 +10,9 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.entity.EntityCombustByEntityEvent;
+ import org.bukkit.event.inventory.EquipmentSetEvent;
+-import org.bukkit.event.player.PlayerBedEnterEvent;
+-import org.bukkit.event.player.PlayerBedLeaveEvent;
+-import org.bukkit.event.player.PlayerDropItemEvent;
+-import org.bukkit.event.player.PlayerItemConsumeEvent;
++import org.bukkit.event.player.*;
+ import org.spigotmc.ProtocolData;
++import org.spigotmc.SpigotConfig;
+ 
+ import java.util.Collection;
+ import java.util.Iterator;
+@@ -963,7 +961,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+ 
+                     if (flag2) {
+                         if (i > 0) {
+-                            entity.g((double) (-MathHelper.sin(this.yaw * 3.1415927F / 180.0F) * (float) i * 0.5F), 0.1D, (double) (MathHelper.cos(this.yaw * 3.1415927F / 180.0F) * (float) i * 0.5F));
++                            entity.g((double) (-MathHelper.sin(this.yaw * 3.1415927F / 180.0F) * (float) i * SpigotConfig.knockbackExtraHorizontal), SpigotConfig.knockbackExtraVertical, (double) (MathHelper.cos(this.yaw * 3.1415927F / 180.0F) * (float) i * SpigotConfig.knockbackExtraHorizontal));
+                             this.motX *= 0.6D;
+                             this.motZ *= 0.6D;
+                             this.setSprinting(false);
+@@ -979,7 +977,12 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+                         // things, doesn't affect server velocity at all.
+                         if (entity instanceof EntityPlayer && entity.velocityChanged) {
+                             EntityPlayer attackedPlayer = (EntityPlayer) entity;
+-                            attackedPlayer.playerConnection.sendPacket(new PacketPlayOutEntityVelocity(attackedPlayer));
++                            PlayerVelocityEvent event = new PlayerVelocityEvent(attackedPlayer.getBukkitEntity(), attackedPlayer.getBukkitEntity().getVelocity());
++                            if(!event.isCancelled())
++                            {
++                                attackedPlayer.getBukkitEntity().setVelocityDirect(event.getVelocity());
++                                attackedPlayer.playerConnection.sendPacket(new PacketPlayOutEntityVelocity(attackedPlayer));
++                            }
+                             attackedPlayer.velocityChanged = false;
+                             attackedPlayer.motX = victimMotX;
+                             attackedPlayer.motY = victimMotY;
+-- 
+2.13.0.windows.1
+

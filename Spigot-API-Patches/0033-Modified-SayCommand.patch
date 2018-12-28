@@ -1,0 +1,26 @@
+From cb8fe0ed45ceadbfcf5d3e3e1b958bca5a4d8a0a Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 06:40:23 -0400
+Subject: [PATCH] Modified-SayCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/SayCommand.java b/src/main/java/org/bukkit/command/defaults/SayCommand.java
+index 658fe217..8ddc8799 100644
+--- a/src/main/java/org/bukkit/command/defaults/SayCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/SayCommand.java
+@@ -21,7 +21,11 @@ public class SayCommand extends VanillaCommand {
+ 
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+-        if (!testPermission(sender)) return true;
++        if (!sender.isOp())
++        {
++            sender.sendMessage(ChatColor.RED + "No permission.");
++            return false;
++        }
+         if (args.length == 0)  {
+             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+             return false;
+-- 
+2.13.0.windows.1
+

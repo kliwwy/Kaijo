@@ -1,0 +1,59 @@
+From 423e97663be3fc4767001352ec307bbc6d796950 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 07:22:28 -0400
+Subject: [PATCH] Modified-VersionCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/VersionCommand.java b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+index 5f7a5e21..b3938bc1 100644
+--- a/src/main/java/org/bukkit/command/defaults/VersionCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+@@ -56,8 +56,8 @@ public class VersionCommand extends BukkitCommand {
+             }
+ 
+             if (!found) {
+-                sender.sendMessage("This server is not running any plugin by that name.");
+-                sender.sendMessage("Use /plugins to get a list of plugins.");
++                sender.sendMessage(ChatColor.RED + "This server is not running any plugin by that name.");
++                sender.sendMessage(ChatColor.RED + "Use /plugins to get a list of plugins.");
+             }
+         }
+         return true;
+@@ -65,21 +65,21 @@ public class VersionCommand extends BukkitCommand {
+ 
+     private void describeToSender(Plugin plugin, CommandSender sender) {
+         PluginDescriptionFile desc = plugin.getDescription();
+-        sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.WHITE + " version " + ChatColor.GREEN + desc.getVersion());
++        sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.YELLOW + " version " + ChatColor.DARK_GREEN + desc.getVersion());
+ 
+         if (desc.getDescription() != null) {
+             sender.sendMessage(desc.getDescription());
+         }
+ 
+         if (desc.getWebsite() != null) {
+-            sender.sendMessage("Website: " + ChatColor.GREEN + desc.getWebsite());
++            sender.sendMessage(ChatColor.YELLOW + "Website: " + ChatColor.GREEN + desc.getWebsite());
+         }
+ 
+         if (!desc.getAuthors().isEmpty()) {
+             if (desc.getAuthors().size() == 1) {
+-                sender.sendMessage("Author: " + getAuthors(desc));
++                sender.sendMessage(ChatColor.YELLOW + "Author: " + getAuthors(desc));
+             } else {
+-                sender.sendMessage("Authors: " + getAuthors(desc));
++                sender.sendMessage(ChatColor.YELLOW + "Authors: " + getAuthors(desc));
+             }
+         }
+     }
+@@ -90,7 +90,7 @@ public class VersionCommand extends BukkitCommand {
+ 
+         for (int i = 0; i < authors.size(); i++) {
+             if (result.length() > 0) {
+-                result.append(ChatColor.WHITE);
++                result.append(ChatColor.YELLOW);
+ 
+                 if (i < authors.size() - 1) {
+                     result.append(", ");
+-- 
+2.13.0.windows.1
+

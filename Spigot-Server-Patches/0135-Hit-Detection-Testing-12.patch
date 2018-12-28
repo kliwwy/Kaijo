@@ -1,0 +1,50 @@
+From 45f823bf136b29fb7e99e1511f0e0ad55df9fb26 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 21:23:02 -0500
+Subject: [PATCH] Hit-Detection-Testing-12
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 7b2421bf..965a6a5c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -567,11 +567,31 @@ public class CraftEventFactory {
+                 {
+                     if(distance >= 0.57d)
+                     {
+-                        if(distance >= 4.0d && accuracy >= 0.99d) callEvent(event);
+-                        if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d) callEvent(event);
+-                        if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d) callEvent(event);
+-                        if(distance < 2.0d && distance >= 1.0d && accuracy >= 0.84d) callEvent(event);
+-                        if(distance < 1.0d && accuracy >= 0.77d) callEvent(event);
++                        if(distance >= 4.0d && accuracy >= 0.99d)
++                        {
++                            callEvent(event);
++                            Bukkit.broadcastMessage("called on above 4");
++                        }
++                        if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d)
++                        {
++                            callEvent(event);
++                            Bukkit.broadcastMessage("called on between 3 and 4");
++                        }
++                        if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d)
++                        {
++                            callEvent(event);
++                            Bukkit.broadcastMessage("called on between 2 and 3");
++                        }
++                        if(distance < 2.0d && distance >= 1.0d && accuracy >= 0.84d)
++                        {
++                            callEvent(event);
++                            Bukkit.broadcastMessage("called on between 1 and 2");
++                        }
++                        if(distance < 1.0d && accuracy >= 0.58d)
++                        {
++                            callEvent(event);
++                            Bukkit.broadcastMessage("called on below 1");
++                        }
+                     }
+                     else callEvent(event);
+                 }
+-- 
+2.13.0.windows.1
+

@@ -1,0 +1,59 @@
+From bc9c9e4360dcd5da47ada18d323a68d837a593ac Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Wed, 29 Aug 2018 02:04:18 -0400
+Subject: [PATCH] Hidden-players-no-longer-receive-potion-effects
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityPotion.java b/src/main/java/net/minecraft/server/EntityPotion.java
+index 69db29f6..6427fd3a 100644
+--- a/src/main/java/net/minecraft/server/EntityPotion.java
++++ b/src/main/java/net/minecraft/server/EntityPotion.java
+@@ -76,17 +76,38 @@ public class EntityPotion extends EntityProjectile {
+ 
+                     while (iterator.hasNext()) {
+                         EntityLiving entityliving = (EntityLiving) iterator.next();
+-                        double d0 = this.f(entityliving);
++                        if(entityliving instanceof EntityPlayer)
++                        {
++                            if(((EntityPlayer) shooter).getBukkitEntity().canSee(((EntityPlayer) entityliving).getBukkitEntity()))
++                            {
++                                double d0 = this.f(entityliving);
+ 
+-                        if (d0 < 16.0D) {
+-                            double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
++                                if (d0 < 16.0D) {
++                                    double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
+ 
+-                            if (entityliving == movingobjectposition.entity) {
+-                                d1 = 1.0D;
++                                    if (entityliving == movingobjectposition.entity) {
++                                        d1 = 1.0D;
++                                    }
++
++                                    // CraftBukkit start
++                                    affected.put((LivingEntity) entityliving.getBukkitEntity(), d1);
++                                }
+                             }
++                        }
++                        else
++                        {
++                            double d0 = this.f(entityliving);
+ 
+-                            // CraftBukkit start
+-                            affected.put((LivingEntity) entityliving.getBukkitEntity(), d1);
++                            if (d0 < 16.0D) {
++                                double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
++
++                                if (entityliving == movingobjectposition.entity) {
++                                    d1 = 1.0D;
++                                }
++
++                                // CraftBukkit start
++                                affected.put((LivingEntity) entityliving.getBukkitEntity(), d1);
++                            }
+                         }
+                     }
+ 
+-- 
+2.13.0.windows.1
+

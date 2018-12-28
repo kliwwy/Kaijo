@@ -1,0 +1,29 @@
+From 2aa224db346fb05ae3cfa783024b7c3edaf02755 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 23:12:33 -0500
+Subject: [PATCH] Hit-Detection-Testing-16
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 3577c023..6a99d511 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -562,6 +562,7 @@ public class CraftEventFactory {
+                 double distanceEye = craftDamager.getEyeLocation().distance(craftDamagee.getLocation());
+                 double distanceLocation = craftDamager.getLocation().distance(craftDamagee.getLocation());
+                 double distance = distanceEye < distanceLocation ? distanceEye : distanceLocation;
++                Bukkit.broadcastMessage("distance: " + distance);
+                 if(distance < 5.0d)
+                 {
+                     if(distance >= 0.57d)
+@@ -571,6 +572,7 @@ public class CraftEventFactory {
+                         double accuracyEye = vectorEye.normalize().dot((lineOfSight.getDirection()));
+                         double accuracyLocation = vectorLocation.normalize().dot(lineOfSight.getDirection());
+                         double accuracy = accuracyEye < accuracyLocation ? accuracyEye : accuracyLocation;
++                        Bukkit.broadcastMessage("accuracy: " + accuracy);
+                         if(distance >= 4.0d && accuracy >= 0.99d) successful = true;
+                         if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d) successful = true;
+                         if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d) successful = true;
+-- 
+2.13.0.windows.1
+

@@ -1,0 +1,47 @@
+From 5b781209ee85df8d0933e07534764995f9995ed6 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 19:34:10 -0500
+Subject: [PATCH] Hit-Detection-Testing-2
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index fe0100f9..e9329b06 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -549,25 +549,17 @@ public class CraftEventFactory {
+ 
+     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
+         EntityDamageEvent event = null;
+-        if (damager != null)
++        if (damager != null) event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++        else event = new EntityDamageEvent(damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++
++        if(damager.getBukkitEntity() instanceof CraftPlayer)
+         {
+-            if(damager instanceof Player && damagee instanceof LivingEntity)
+-            {
+-                Location eye = ((Player)damager).getEyeLocation();
+-                Vector toEntity = ((LivingEntity)damagee).getEyeLocation().toVector().subtract(eye.toVector());
+-                double dot = toEntity.normalize().dot(eye.getDirection());
+-                if(dot > 0.99D)
+-                {
+-                    ((Player)damager).sendMessage("success, dot: " + dot);
+-                    event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+-                }
+-            }
+-            else event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+-        } else {
+-            event = new EntityDamageEvent(damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++            Location eye = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation();
++            Vector toEntity = damagee.getBukkitEntity().getLocation().toVector().subtract(eye.toVector());
++            double dot = toEntity.normalize().dot(eye.getDirection());
++            ((CraftPlayer)damager.getBukkitEntity()).sendMessage("successful hit, dot: " + dot);
+         }
+ 
+-        Bukkit.broadcastMessage("damage event called");
+         callEvent(event);
+ 
+         if (!event.isCancelled()) {
+-- 
+2.13.0.windows.1
+

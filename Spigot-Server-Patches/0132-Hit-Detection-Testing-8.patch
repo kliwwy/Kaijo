@@ -1,0 +1,30 @@
+From 9272a87605a8ccccef094d4711530c56516743b1 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 20:28:25 -0500
+Subject: [PATCH] Hit-Detection-Testing-8
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 800983c8..cd4c4935 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -555,11 +555,12 @@ public class CraftEventFactory {
+         {
+             if(damager.getBukkitEntity() instanceof CraftPlayer && damagee.getBukkitEntity() instanceof CraftPlayer)
+             {
+-                Location eye = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation();
+-                Vector toEntity = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(eye.toVector());
++                Location lineOfSight = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation();
+                 double distance = ((CraftPlayer)damager.getBukkitEntity()).getLocation().distance(((CraftPlayer)damagee.getBukkitEntity()).getLocation());
+-                double dot = toEntity.normalize().dot(eye.getDirection());
+-                Bukkit.broadcastMessage(((CraftPlayer)damager.getBukkitEntity()).getName() + " hit: distance: " + distance + ", accuracy: " + dot + "%");
++                Vector accuracyEye = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(lineOfSight.toVector());
++                Vector accuracyLocation = ((CraftPlayer)damagee.getBukkitEntity()).getLocation().toVector().subtract(lineOfSight.toVector());
++                double accuracy = accuracyEye.normalize().dot(lineOfSight.getDirection()) > accuracyLocation.normalize().dot(lineOfSight.getDirection()) ? accuracyEye.normalize().dot(lineOfSight.getDirection()) : accuracyLocation.normalize().dot(lineOfSight.getDirection());
++                Bukkit.broadcastMessage(((CraftPlayer)damager.getBukkitEntity()).getName() + " hit: distance: " + distance + ", accuracy: " + accuracy + "%");
+             }
+         }
+ 
+-- 
+2.13.0.windows.1
+

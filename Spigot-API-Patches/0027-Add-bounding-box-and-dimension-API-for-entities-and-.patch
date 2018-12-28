@@ -1,4 +1,4 @@
-From 8f54cb4c0e8eb3f1329f9de8d062bbfe08882df1 Mon Sep 17 00:00:00 2001
+From 3451ddcb74a1220a59916c351d9393aa21809495 Mon Sep 17 00:00:00 2001
 From: Matthew Steglinski <matthew.steglinski@mail.utoronto.ca>
 Date: Fri, 9 Feb 2018 11:46:19 -0500
 Subject: [PATCH] Add bounding box and dimension API for entities and blocks
@@ -133,20 +133,20 @@ index 4a53109a..d7db0d22 100644
  import org.bukkit.Chunk;
  import org.bukkit.Material;
  import org.bukkit.World;
-@@ -135,6 +136,13 @@ public interface Block extends Metadatable {
-      */
+@@ -136,6 +137,13 @@ public interface Block extends Metadatable {
      int getZ();
  
-+    /**
+     /**
 +     * Returns the bounding box of the block
 +     *
 +     * @return Bounding box of block
 +     */
 +    AxisAlignedBB getBoundingBox();
 +
-     /**
++    /**
       * Gets the Location of the block
       *
+      * @return Location of block
 diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
 index 5a1e895f..cc1d5339 100644
 --- a/src/main/java/org/bukkit/entity/Entity.java
@@ -158,11 +158,10 @@ index 5a1e895f..cc1d5339 100644
  import org.bukkit.Location;
  import org.bukkit.EntityEffect;
  import org.bukkit.Server;
-@@ -17,6 +18,34 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-  */
+@@ -18,6 +19,34 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  public interface Entity extends Metadatable {
  
-+    /**
+     /**
 +     * Returns the entity's current bounding box
 +     *
 +     * @return a new copy of AxisAlignedBB containing the bounding box of this entity
@@ -190,9 +189,10 @@ index 5a1e895f..cc1d5339 100644
 +     */
 +    public float getLength();
 +
-     /**
++    /**
       * Gets the entity's current position
       *
+      * @return a new copy of Location containing the position of this entity
 -- 
-2.16.1.windows.3
+2.13.0.windows.1
 

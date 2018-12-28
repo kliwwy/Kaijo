@@ -1,0 +1,34 @@
+From 703874e829f910b49e69507b260853366526021b Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 21:54:47 -0500
+Subject: [PATCH] Hit-Detection-Testing-14
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 6094df73..036dccd4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -562,16 +562,20 @@ public class CraftEventFactory {
+                 double distance = distanceEye < distanceLocation ? distanceEye : distanceLocation;
+                 if(distance < 5.0d)
+                 {
++                    Bukkit.broadcastMessage(((CraftPlayer)damager.getBukkitEntity()).getName() + "'s hit:");
++                    Bukkit.broadcastMessage("distance: " + distance);
+                     if(distance >= 0.57d)
+                     {
+                         Vector accuracyEye = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(lineOfSight.toVector());
+                         Vector accuracyLocation = ((CraftPlayer)damagee.getBukkitEntity()).getLocation().toVector().subtract(lineOfSight.toVector());
+                         double accuracy = accuracyEye.normalize().dot(lineOfSight.getDirection()) > accuracyLocation.normalize().dot(lineOfSight.getDirection()) ? accuracyEye.normalize().dot(lineOfSight.getDirection()) : accuracyLocation.normalize().dot(lineOfSight.getDirection());
++                        Bukkit.broadcastMessage("accuracy: " + accuracy);
+                         if(distance >= 4.0d && accuracy >= 0.99d) successful = true;
+                         if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d) successful = true;
+                         if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d) successful = true;
+                         if(distance < 2.0d && distance >= 1.0d && accuracy >= 0.84d) successful = true;
+                         if(distance < 1.0d && accuracy >= 0.77d) successful = true;
++                        Bukkit.broadcastMessage("successful hit: " + successful);
+                         if(successful) callEvent(event);
+                         else return event;
+                     }
+-- 
+2.13.0.windows.1
+

@@ -1,0 +1,26 @@
+From 637c32319e8bc4a5baf890480d834bec0dcf9d10 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 19:11:05 -0500
+Subject: [PATCH] Testing-Player-Hit-Detection
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 301c97b2..e75ba840 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -555,7 +555,11 @@ public class CraftEventFactory {
+                 Location eye = ((Player)damager).getEyeLocation();
+                 Vector toEntity = ((LivingEntity)damagee).getEyeLocation().toVector().subtract(eye.toVector());
+                 double dot = toEntity.normalize().dot(eye.getDirection());
+-                if(dot > 0.99D) event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++                if(dot > 0.99D)
++                {
++                    ((Player)damager).sendMessage("success, dot: " + dot);
++                    event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++                }
+             }
+             else event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+         } else {
+-- 
+2.13.0.windows.1
+

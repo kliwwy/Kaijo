@@ -1,0 +1,40 @@
+From 145eff24d6058328e884e3938daf43d7fe11e109 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 07:22:14 -0400
+Subject: [PATCH] Modified-PluginsCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/PluginsCommand.java b/src/main/java/org/bukkit/command/defaults/PluginsCommand.java
+index e21d1679..f107b9af 100644
+--- a/src/main/java/org/bukkit/command/defaults/PluginsCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/PluginsCommand.java
+@@ -20,7 +20,7 @@ public class PluginsCommand extends BukkitCommand {
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+         if (!testPermission(sender)) return true;
+ 
+-        sender.sendMessage("Plugins " + getPluginList());
++        sender.sendMessage(ChatColor.YELLOW + "Plugins " + ChatColor.RESET + getPluginList());
+         return true;
+     }
+ 
+@@ -30,7 +30,7 @@ public class PluginsCommand extends BukkitCommand {
+ 
+         for (Plugin plugin : plugins) {
+             if (pluginList.length() > 0) {
+-                pluginList.append(ChatColor.WHITE);
++                pluginList.append(ChatColor.YELLOW);
+                 pluginList.append(", ");
+             }
+ 
+@@ -38,7 +38,7 @@ public class PluginsCommand extends BukkitCommand {
+             pluginList.append(plugin.getDescription().getName());
+         }
+ 
+-        return "(" + plugins.length + "): " + pluginList.toString();
++        return ChatColor.YELLOW + "(" + ChatColor.GREEN + plugins.length + ChatColor.YELLOW + "): " + ChatColor.RESET + pluginList.toString();
+     }
+ 
+     // Spigot Start
+-- 
+2.13.0.windows.1
+

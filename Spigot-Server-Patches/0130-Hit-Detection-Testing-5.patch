@@ -1,0 +1,37 @@
+From af82b54c8ea9a6c6542a3950dd6175f87fcb4f4f Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 19:59:23 -0500
+Subject: [PATCH] Hit-Detection-Testing-5
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 70f2a547..9da1d1ba 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -551,14 +551,16 @@ public class CraftEventFactory {
+         EntityDamageEvent event = null;
+         if (damager != null) event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+         else event = new EntityDamageEvent(damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+-
+-        if(damager.getBukkitEntity() instanceof CraftPlayer && damagee.getBukkitEntity() instanceof CraftPlayer)
++        if(damager != null)
+         {
+-            Location eye = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation();
+-            Vector toEntity = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(eye.toVector());
+-            double distance = ((CraftPlayer)damager.getBukkitEntity()).getLocation().distance(((CraftPlayer)damagee.getBukkitEntity()).getLocation());
+-            double dot = toEntity.normalize().dot(eye.getDirection());
+-            ((CraftPlayer)damager.getBukkitEntity()).sendMessage("successful hit, distance: " + distance + ", dot: " + dot);
++            if(damager.getBukkitEntity() instanceof CraftPlayer && damagee.getBukkitEntity() instanceof CraftPlayer)
++            {
++                Location eye = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation();
++                Vector toEntity = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(eye.toVector());
++                double distance = ((CraftPlayer)damager.getBukkitEntity()).getLocation().distance(((CraftPlayer)damagee.getBukkitEntity()).getLocation());
++                double dot = toEntity.normalize().dot(eye.getDirection());
++                ((CraftPlayer)damager.getBukkitEntity()).sendMessage("successful hit, distance: " + distance + ", dot: " + dot);
++            }
+         }
+ 
+         callEvent(event);
+-- 
+2.13.0.windows.1
+

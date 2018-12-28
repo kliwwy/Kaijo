@@ -1,0 +1,93 @@
+From 57556168976859c2b2c6af83f849ec207a0817ce Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 18:30:20 -0500
+Subject: [PATCH] Modified-More-Commands
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/DeopCommand.java b/src/main/java/org/bukkit/command/defaults/DeopCommand.java
+index c8642eb3..544d0573 100644
+--- a/src/main/java/org/bukkit/command/defaults/DeopCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/DeopCommand.java
+@@ -38,7 +38,7 @@ public class DeopCommand extends VanillaCommand {
+         player.setOp(false);
+ 
+         if (player instanceof Player) {
+-            ((Player) player).sendMessage(ChatColor.YELLOW + "You are no longer op!");
++            ((Player) player).sendMessage(ChatColor.YELLOW + "You are no longer op.");
+         }
+ 
+         Command.broadcastCommandMessage(sender, "De-opped " + args[0]);
+diff --git a/src/main/java/org/bukkit/command/defaults/ListCommand.java b/src/main/java/org/bukkit/command/defaults/ListCommand.java
+index 49719022..716f4e00 100644
+--- a/src/main/java/org/bukkit/command/defaults/ListCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/ListCommand.java
+@@ -28,18 +28,13 @@ public class ListCommand extends VanillaCommand {
+         final Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+ 
+         for (Player player : players) {
+-            // If a player is hidden from the sender don't show them in the list
+-            if (sender instanceof Player && !((Player) sender).canSee(player))
+-                continue;
+-
+             if (online.length() > 0) {
+                 online.append(ChatColor.YELLOW + ", ");
+             }
+-
+-            online.append(player.isOp() ? ChatColor.RED + player.getName() : ChatColor.GREEN + player.getName());
++            online.append((player.isOp() ? ChatColor.RED : ChatColor.GREEN) + player.getName());
+         }
+ 
+-        sender.sendMessage(ChatColor.YELLOW + "Online (" + ChatColor.GREEN + players.size() + ChatColor.YELLOW + "/" + ChatColor.YELLOW + Bukkit.getMaxPlayers() + ChatColor.YELLOW + ")" + ChatColor.DARK_GRAY + ":");
++        sender.sendMessage(ChatColor.YELLOW + "Online (" + ChatColor.GREEN + players.size() + ChatColor.YELLOW + "/" + ChatColor.YELLOW + Bukkit.getMaxPlayers() + ChatColor.YELLOW + "):");
+         sender.sendMessage(online.toString());
+ 
+         return true;
+diff --git a/src/main/java/org/bukkit/command/defaults/MeCommand.java b/src/main/java/org/bukkit/command/defaults/MeCommand.java
+index a8a3c693..06594dbb 100644
+--- a/src/main/java/org/bukkit/command/defaults/MeCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/MeCommand.java
+@@ -26,7 +26,7 @@ public class MeCommand extends VanillaCommand {
+         }
+ 
+         StringBuilder message = new StringBuilder();
+-        message.append(sender.isOp() ? ChatColor.RED + sender.getName() : ChatColor.YELLOW + sender.getName());
++        message.append((sender.isOp() ? ChatColor.RED : ChatColor.GREEN) + sender.getName());
+ 
+         for (String arg : args) {
+             message.append(" ");
+diff --git a/src/main/java/org/bukkit/command/defaults/SayCommand.java b/src/main/java/org/bukkit/command/defaults/SayCommand.java
+index f3641381..b637b6ee 100644
+--- a/src/main/java/org/bukkit/command/defaults/SayCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/SayCommand.java
+@@ -33,13 +33,10 @@ public class SayCommand extends VanillaCommand {
+ 
+         StringBuilder message = new StringBuilder();
+         message.append(ChatColor.YELLOW).append("[");
+-        message.append(ChatColor.GREEN);
+         if (sender instanceof ConsoleCommandSender) {
+-            message.append("Server");
+-        } else if (sender instanceof Player) {
+-            message.append(((Player) sender).getName());
++            message.append(ChatColor.DARK_RED + "CONSOLE");
+         } else {
+-            message.append(sender.getName());
++            message.append((sender.isOp() ? ChatColor.RED : ChatColor.GREEN) + sender.getName());
+         }
+         message.append(ChatColor.YELLOW).append("] ");
+ 
+diff --git a/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java b/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java
+index 55775c36..59adff65 100644
+--- a/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java
+@@ -59,7 +59,7 @@ public class WhitelistCommand extends VanillaCommand {
+                     result.append(ChatColor.GREEN + player.getName());
+                 }
+ 
+-                sender.sendMessage(ChatColor.YELLOW + "Whitelisted (" + ChatColor.GREEN + Bukkit.getWhitelistedPlayers().size() + ChatColor.YELLOW + ")" + ChatColor.DARK_GRAY + ":");
++                sender.sendMessage(ChatColor.YELLOW + "Whitelisted (" + ChatColor.GREEN + Bukkit.getWhitelistedPlayers().size() + ChatColor.YELLOW + "):");
+                 sender.sendMessage(result.toString());
+                 return true;
+             }
+-- 
+2.13.0.windows.1
+

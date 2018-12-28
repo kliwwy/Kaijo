@@ -1,0 +1,50 @@
+From 1ff9c726f68521bf39d11fa3dab40daf1ddb7e03 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 18:12:22 -0500
+Subject: [PATCH] Testing-Player-Attacking-Entities-Correction
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 4400ad84..301c97b2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -36,6 +36,7 @@ import net.minecraft.server.World;
+ import net.minecraft.server.WorldServer;
+ 
+ import org.bukkit.Bukkit;
++import org.bukkit.Location;
+ import org.bukkit.Material;
+ import org.bukkit.Server;
+ import org.bukkit.Statistic.Type;
+@@ -82,6 +83,7 @@ import org.bukkit.event.player.*;
+ import org.bukkit.event.server.ServerListPingEvent;
+ import org.bukkit.inventory.InventoryView;
+ import org.bukkit.inventory.meta.BookMeta;
++import org.bukkit.util.Vector;
+ 
+ public class CraftEventFactory {
+     public static final DamageSource MELTING = CraftDamageSource.copyOf(DamageSource.BURN);
+@@ -545,9 +547,17 @@ public class CraftEventFactory {
+     }
+ 
+     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
+-        EntityDamageEvent event;
+-        if (damager != null) {
+-            event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++        EntityDamageEvent event = null;
++        if (damager != null)
++        {
++            if(damager instanceof Player && damagee instanceof LivingEntity)
++            {
++                Location eye = ((Player)damager).getEyeLocation();
++                Vector toEntity = ((LivingEntity)damagee).getEyeLocation().toVector().subtract(eye.toVector());
++                double dot = toEntity.normalize().dot(eye.getDirection());
++                if(dot > 0.99D) event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
++            }
++            else event = new EntityDamageByEntityEvent(damager.getBukkitEntity(), damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+         } else {
+             event = new EntityDamageEvent(damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+         }
+-- 
+2.13.0.windows.1
+

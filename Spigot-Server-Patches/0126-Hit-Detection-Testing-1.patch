@@ -1,0 +1,29 @@
+From c43d6206e1bfd9b2828491515498ca4d2ee60bbf Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 19:23:57 -0500
+Subject: [PATCH] Hit-Detection-Testing-1
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index e75ba840..fe0100f9 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -508,6 +508,7 @@ public class CraftEventFactory {
+                 throw new RuntimeException(String.format("Unhandled damage of %s by %s from %s", entity, damager.getHandle(), source.translationIndex)); // Spigot
+             }
+             EntityDamageEvent event = callEvent(new EntityDamageByEntityEvent(damager, entity.getBukkitEntity(), cause, modifiers, modifierFunctions));
++
+             if (!event.isCancelled()) {
+                 event.getEntity().setLastDamageCause(event);
+             }
+@@ -566,6 +567,7 @@ public class CraftEventFactory {
+             event = new EntityDamageEvent(damagee.getBukkitEntity(), cause, modifiers, modifierFunctions);
+         }
+ 
++        Bukkit.broadcastMessage("damage event called");
+         callEvent(event);
+ 
+         if (!event.isCancelled()) {
+-- 
+2.13.0.windows.1
+

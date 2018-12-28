@@ -1,0 +1,32 @@
+From cfe864a024341382586acca830d5757958292ad1 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Wed, 29 Aug 2018 02:05:31 -0400
+Subject: [PATCH] Modified-hide-and-show-player-methods
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 918ef0ef..12efc787 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -921,9 +921,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         if (entry != null) {
+             entry.clear(getHandle());
+         }
+-
+-        //remove the hidden player from this player user list
+-        getHandle().playerConnection.sendPacket(PacketPlayOutPlayerInfo.removePlayer( ( (CraftPlayer) player ).getHandle ())); // Spigot - protocol patch
+     }
+ 
+     public void showPlayer(Player player) {
+@@ -939,8 +936,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         if (entry != null && !entry.trackedPlayers.contains(getHandle())) {
+             entry.updatePlayer(getHandle());
+         }
+-
+-        getHandle().playerConnection.sendPacket(PacketPlayOutPlayerInfo.addPlayer( ( (CraftPlayer) player ).getHandle ())); // Spigot - protocol patch
+     }
+ 
+     public void removeDisconnectingPlayer(Player player) {
+-- 
+2.13.0.windows.1
+

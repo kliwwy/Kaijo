@@ -1,0 +1,35 @@
+From d93ff6a271e712bb4b4485de03199360a7f8bc8a Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 23:25:36 -0500
+Subject: [PATCH] Hit-Detection-Fixed
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 8d397128..bcafb8d1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -562,7 +562,6 @@ public class CraftEventFactory {
+                 double distanceEye = craftDamager.getEyeLocation().distance(craftDamagee.getLocation());
+                 double distanceLocation = craftDamager.getLocation().distance(craftDamagee.getLocation());
+                 double distance = distanceEye < distanceLocation ? distanceEye : distanceLocation;
+-                Bukkit.broadcastMessage("distance: " + distance);
+                 if(distance < 5.0d)
+                 {
+                     if(distance >= 0.57d)
+@@ -572,13 +571,11 @@ public class CraftEventFactory {
+                         double accuracyEye = vectorEye.normalize().dot((lineOfSight.getDirection()));
+                         double accuracyLocation = vectorLocation.normalize().dot(lineOfSight.getDirection());
+                         double accuracy = accuracyEye > accuracyLocation ? accuracyEye : accuracyLocation;
+-                        Bukkit.broadcastMessage("accuracy: " + accuracy);
+                         if(distance >= 4.0d && accuracy >= 0.99d) successful = true;
+                         if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d) successful = true;
+                         if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d) successful = true;
+                         if(distance < 2.0d && distance >= 1.0d && accuracy >= 0.84d) successful = true;
+                         if(distance < 1.0d && distance >= 0.57d && accuracy >= 0.77d) successful = true;
+-                        Bukkit.broadcastMessage("successful hit: " + successful);
+                         if(!successful) event.setCancelled(true);
+                     }
+                 }
+-- 
+2.13.0.windows.1
+

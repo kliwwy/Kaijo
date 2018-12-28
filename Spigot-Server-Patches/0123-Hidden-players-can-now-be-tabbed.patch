@@ -1,0 +1,22 @@
+From 2908251214bed24ce3cacfa10016beba754361bc Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 31 Aug 2018 19:39:14 -0400
+Subject: [PATCH] Hidden-players-can-now-be-tabbed
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 1d9464c1..e4b00486 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1747,7 +1747,7 @@ public final class CraftServer implements Server {
+         PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
+         String token = event.getLastToken();
+         for (Player p : getOnlinePlayers()) {
+-            if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(), token)) {
++            if (StringUtil.startsWithIgnoreCase(p.getName(), token)) {
+                 completions.add(p.getName());
+             }
+         }
+-- 
+2.13.0.windows.1
+

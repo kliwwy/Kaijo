@@ -1,0 +1,26 @@
+From ce1af3bd16576de685ef80a2e030d959c705fdb4 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 06:38:37 -0400
+Subject: [PATCH] Modified-OpCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/OpCommand.java b/src/main/java/org/bukkit/command/defaults/OpCommand.java
+index e1f8452a..7e0b008d 100644
+--- a/src/main/java/org/bukkit/command/defaults/OpCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/OpCommand.java
+@@ -25,7 +25,11 @@ public class OpCommand extends VanillaCommand {
+ 
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+-        if (!testPermission(sender)) return true;
++        if(sender instanceof Player)
++        {
++            sender.sendMessage(ChatColor.RED + "Only console can perform this command.");
++            return false;
++        }
+         if (args.length != 1 || args[0].length() == 0)  {
+             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+             return false;
+-- 
+2.13.0.windows.1
+

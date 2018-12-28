@@ -1,0 +1,225 @@
+From 392b254e2222ef0c971ce1997144416c206b5998 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 18:11:03 -0500
+Subject: [PATCH] Modified-Multiple-Commands
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/KickCommand.java b/src/main/java/org/bukkit/command/defaults/KickCommand.java
+index b6c3f79f..8f24989c 100644
+--- a/src/main/java/org/bukkit/command/defaults/KickCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/KickCommand.java
+@@ -30,14 +30,14 @@ public class KickCommand extends VanillaCommand {
+         Player player = Bukkit.getPlayerExact(args[0]);
+ 
+         if (player != null) {
+-            String reason = "Kicked by an operator.";
++            String reason = "Kicked from the server.";
+ 
+             if (args.length > 1) {
+                 reason = createString(args, 1);
+             }
+ 
+             player.kickPlayer(reason);
+-            Command.broadcastCommandMessage(sender, "Kicked player " + player.getName() + ". With reason:\n" + reason);
++            Command.broadcastCommandMessage(sender, "Kicked player " + player.getName() + " for " + reason);
+         } else {
+             sender.sendMessage( args[0] + " not found.");
+         }
+diff --git a/src/main/java/org/bukkit/command/defaults/KillCommand.java b/src/main/java/org/bukkit/command/defaults/KillCommand.java
+index 3270db5f..5adc0759 100644
+--- a/src/main/java/org/bukkit/command/defaults/KillCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/KillCommand.java
+@@ -4,6 +4,8 @@ import java.util.List;
+ 
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
++import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.entity.EntityDamageEvent;
+@@ -24,6 +26,17 @@ public class KillCommand extends VanillaCommand {
+ 
+         if (sender instanceof Player) {
+             Player player = (Player) sender;
++            if(args.length >= 1)
++            {
++                Player target = Bukkit.getPlayer(args[0]);
++                if(target != null) player = target;
++                else
++                {
++                    sender.sendMessage(args[0] + " not found.");
++                    return false;
++                }
++            }
++            if(player == null) player = (Player) sender;
+ 
+             EntityDamageEvent ede = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.SUICIDE, 1000);
+             Bukkit.getPluginManager().callEvent(ede);
+@@ -31,9 +44,10 @@ public class KillCommand extends VanillaCommand {
+ 
+             ede.getEntity().setLastDamageCause(ede);
+             player.setHealth(0);
+-            sender.sendMessage("Ouch. That look like it hurt.");
++            sender.sendMessage(ChatColor.YELLOW + "You've killed " + ChatColor.GREEN + (player.getUniqueId().equals(((Player) sender).getUniqueId()) ? "yourself" : player.getName()) + ChatColor.YELLOW + ".");
++            Command.broadcastCommandMessage(sender, "Killed " + player.getName() + ".");
+         } else {
+-            sender.sendMessage("You can only perform this command as a player");
++            sender.sendMessage(ChatColor.RED + "You can only perform this command as a player");
+         }
+ 
+         return true;
+diff --git a/src/main/java/org/bukkit/command/defaults/ListCommand.java b/src/main/java/org/bukkit/command/defaults/ListCommand.java
+index eb8a6a91..49719022 100644
+--- a/src/main/java/org/bukkit/command/defaults/ListCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/ListCommand.java
+@@ -5,6 +5,7 @@ import java.util.List;
+ 
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+ 
+@@ -32,13 +33,14 @@ public class ListCommand extends VanillaCommand {
+                 continue;
+ 
+             if (online.length() > 0) {
+-                online.append(", ");
++                online.append(ChatColor.YELLOW + ", ");
+             }
+ 
+-            online.append(player.getDisplayName());
++            online.append(player.isOp() ? ChatColor.RED + player.getName() : ChatColor.GREEN + player.getName());
+         }
+ 
+-        sender.sendMessage("There are " + players.size() + "/" + Bukkit.getMaxPlayers() + " players online:\n" + online.toString());
++        sender.sendMessage(ChatColor.YELLOW + "Online (" + ChatColor.GREEN + players.size() + ChatColor.YELLOW + "/" + ChatColor.YELLOW + Bukkit.getMaxPlayers() + ChatColor.YELLOW + ")" + ChatColor.DARK_GRAY + ":");
++        sender.sendMessage(online.toString());
+ 
+         return true;
+     }
+diff --git a/src/main/java/org/bukkit/command/defaults/MeCommand.java b/src/main/java/org/bukkit/command/defaults/MeCommand.java
+index dd85a92e..a8a3c693 100644
+--- a/src/main/java/org/bukkit/command/defaults/MeCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/MeCommand.java
+@@ -26,14 +26,14 @@ public class MeCommand extends VanillaCommand {
+         }
+ 
+         StringBuilder message = new StringBuilder();
+-        message.append(sender.getName());
++        message.append(sender.isOp() ? ChatColor.RED + sender.getName() : ChatColor.YELLOW + sender.getName());
+ 
+         for (String arg : args) {
+             message.append(" ");
+-            message.append(arg);
++            message.append(ChatColor.YELLOW + arg);
+         }
+ 
+-        Bukkit.broadcastMessage("* " + message.toString());
++        Bukkit.broadcastMessage(ChatColor.GOLD + "* " + message.toString());
+ 
+         return true;
+     }
+diff --git a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
+index 012fd80f..d3767b4d 100644
+--- a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
+@@ -26,7 +26,7 @@ public class ReloadCommand extends BukkitCommand {
+         }
+ 
+         Bukkit.reload();
+-        Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Reload complete.");
++        Command.broadcastCommandMessage(sender, "Reload complete.");
+ 
+         return true;
+     }
+diff --git a/src/main/java/org/bukkit/command/defaults/SayCommand.java b/src/main/java/org/bukkit/command/defaults/SayCommand.java
+index 8ddc8799..f3641381 100644
+--- a/src/main/java/org/bukkit/command/defaults/SayCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/SayCommand.java
+@@ -32,15 +32,16 @@ public class SayCommand extends VanillaCommand {
+         }
+ 
+         StringBuilder message = new StringBuilder();
+-        message.append(ChatColor.LIGHT_PURPLE).append("[");
++        message.append(ChatColor.YELLOW).append("[");
++        message.append(ChatColor.GREEN);
+         if (sender instanceof ConsoleCommandSender) {
+             message.append("Server");
+         } else if (sender instanceof Player) {
+-            message.append(((Player) sender).getDisplayName());
++            message.append(((Player) sender).getName());
+         } else {
+             message.append(sender.getName());
+         }
+-        message.append(ChatColor.LIGHT_PURPLE).append("] ");
++        message.append(ChatColor.YELLOW).append("] ");
+ 
+         if (args.length > 0) {
+             message.append(args[0]);
+diff --git a/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java b/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java
+index 6559b33b..55775c36 100644
+--- a/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/WhitelistCommand.java
+@@ -32,19 +32,19 @@ public class WhitelistCommand extends VanillaCommand {
+                 if (badPerm(sender, "reload")) return true;
+ 
+                 Bukkit.reloadWhitelist();
+-                Command.broadcastCommandMessage(sender, "Reloaded white-list from file");
++                Command.broadcastCommandMessage(sender, "Reloaded whitelist from file");
+                 return true;
+             } else if (args[0].equalsIgnoreCase("on")) {
+                 if (badPerm(sender, "enable")) return true;
+ 
+                 Bukkit.setWhitelist(true);
+-                Command.broadcastCommandMessage(sender, "Turned on white-listing");
++                Command.broadcastCommandMessage(sender, "Turned on whitelisting");
+                 return true;
+             } else if (args[0].equalsIgnoreCase("off")) {
+                 if (badPerm(sender, "disable")) return true;
+ 
+                 Bukkit.setWhitelist(false);
+-                Command.broadcastCommandMessage(sender, "Turned off white-listing");
++                Command.broadcastCommandMessage(sender, "Turned off whitelisting");
+                 return true;
+             } else if (args[0].equalsIgnoreCase("list")) {
+                 if (badPerm(sender, "list")) return true;
+@@ -53,13 +53,14 @@ public class WhitelistCommand extends VanillaCommand {
+ 
+                 for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()) {
+                     if (result.length() > 0) {
+-                        result.append(", ");
++                        result.append(ChatColor.YELLOW + ", ");
+                     }
+ 
+-                    result.append(player.getName());
++                    result.append(ChatColor.GREEN + player.getName());
+                 }
+ 
+-                sender.sendMessage("White-listed players: " + result.toString());
++                sender.sendMessage(ChatColor.YELLOW + "Whitelisted (" + ChatColor.GREEN + Bukkit.getWhitelistedPlayers().size() + ChatColor.YELLOW + ")" + ChatColor.DARK_GRAY + ":");
++                sender.sendMessage(result.toString());
+                 return true;
+             }
+         } else if (args.length == 2) {
+@@ -68,14 +69,14 @@ public class WhitelistCommand extends VanillaCommand {
+ 
+                 Bukkit.getOfflinePlayer(args[1]).setWhitelisted(true);
+ 
+-                Command.broadcastCommandMessage(sender, "Added " + args[1] + " to white-list");
++                Command.broadcastCommandMessage(sender, "Added " + args[1] + " to whitelist");
+                 return true;
+             } else if (args[0].equalsIgnoreCase("remove")) {
+                 if (badPerm(sender, "remove")) return true;
+ 
+                 Bukkit.getOfflinePlayer(args[1]).setWhitelisted(false);
+ 
+-                Command.broadcastCommandMessage(sender, "Removed " + args[1] + " from white-list");
++                Command.broadcastCommandMessage(sender, "Removed " + args[1] + " from whitelist");
+                 return true;
+             }
+         }
+-- 
+2.13.0.windows.1
+

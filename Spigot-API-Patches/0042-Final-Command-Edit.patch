@@ -1,0 +1,22 @@
+From 0826865fee96e9dde97cb40c49ee74b6446844b0 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 18:40:17 -0500
+Subject: [PATCH] Final-Command-Edit
+
+
+diff --git a/src/main/java/org/bukkit/command/Command.java b/src/main/java/org/bukkit/command/Command.java
+index 869bc47d..07cd6d1f 100644
+--- a/src/main/java/org/bukkit/command/Command.java
++++ b/src/main/java/org/bukkit/command/Command.java
+@@ -354,7 +354,7 @@ public abstract class Command {
+     }
+ 
+     public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
+-        String result = ChatColor.GREEN + source.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + message;
++        String result = (source.getName().equals("CONSOLE") ? ChatColor.RED : ChatColor.GREEN) + source.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + message;
+ 
+         if (source instanceof BlockCommandSender) {
+             BlockCommandSender blockCommandSender = (BlockCommandSender) source;
+-- 
+2.13.0.windows.1
+

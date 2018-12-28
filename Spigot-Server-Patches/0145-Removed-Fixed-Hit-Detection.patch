@@ -1,0 +1,52 @@
+From 5cde7172f09eb3043089f628b6ab0525bea25cc2 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sun, 9 Dec 2018 10:36:08 -0500
+Subject: [PATCH] Removed-Fixed-Hit-Detection
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 241a70cc..ed238840 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -558,36 +558,11 @@ public class CraftEventFactory {
+                 double distanceEye = lineOfSight.distance(craftDamagee.getLocation());
+                 double distanceLocation = craftDamager.getLocation().distance(craftDamagee.getLocation());
+                 double distance = distanceEye < distanceLocation ? distanceEye : distanceLocation;
+-                Bukkit.broadcastMessage(ChatColor.GREEN + craftDamager.getName() + ChatColor.YELLOW + "'s hit data:");
+-                if(distance < 5.0d)
+-                {
+-                    if(distance >= 0.57d)
+-                    {
+-                        boolean successful = false;
+-                        Vector vectorEye = craftDamagee.getEyeLocation().toVector().subtract(lineOfSight.toVector());
+-                        Vector vectorLocation = craftDamagee.getLocation().toVector().subtract(lineOfSight.toVector());
+-                        double accuracyEye = vectorEye.normalize().dot((lineOfSight.getDirection()));
+-                        double accuracyLocation = vectorLocation.normalize().dot(lineOfSight.getDirection());
+-                        double accuracy = accuracyEye > accuracyLocation ? accuracyEye : accuracyLocation;
+-                        if(distance >= 4.0d && accuracy >= 0.99d) successful = true;
+-                        if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d) successful = true;
+-                        if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d) successful = true;
+-                        if(distance < 2.0d && distance >= 1.0d && accuracy >= 0.84d) successful = true;
+-                        if(distance < 1.0d && distance >= 0.57d && accuracy >= 0.77d) successful = true;
+-                        if(!successful) event.setCancelled(true);
+-                        Bukkit.broadcastMessage(ChatColor.YELLOW + "distance: " + ChatColor.GREEN + distance + ChatColor.YELLOW + ", accuracy: " + ChatColor.GREEN + accuracy + ChatColor.YELLOW + ", successful: " + ChatColor.GREEN + successful);
+-                    }
+-                }
+-                else event.setCancelled(true);
++                if(distance >= 5.0d) event.setCancelled(true);
+             }
+         }
+-
+         callEvent(event);
+-
+-        if (!event.isCancelled()) {
+-            event.getEntity().setLastDamageCause(event);
+-        }
+-
++        if (!event.isCancelled()) event.getEntity().setLastDamageCause(event);
+         return event;
+     }
+ 
+-- 
+2.13.0.windows.1
+

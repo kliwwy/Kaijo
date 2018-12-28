@@ -1,0 +1,22 @@
+From 1497d016a34d53c991dd2ef0007e89e08f1d1fc5 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Fri, 24 Aug 2018 07:26:30 -0400
+Subject: [PATCH] Modified-VersionCommand
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/VersionCommand.java b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+index b3938bc1..d563e403 100644
+--- a/src/main/java/org/bukkit/command/defaults/VersionCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+@@ -68,7 +68,7 @@ public class VersionCommand extends BukkitCommand {
+         sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.YELLOW + " version " + ChatColor.DARK_GREEN + desc.getVersion());
+ 
+         if (desc.getDescription() != null) {
+-            sender.sendMessage(desc.getDescription());
++            sender.sendMessage(ChatColor.YELLOW + desc.getDescription());
+         }
+ 
+         if (desc.getWebsite() != null) {
+-- 
+2.13.0.windows.1
+

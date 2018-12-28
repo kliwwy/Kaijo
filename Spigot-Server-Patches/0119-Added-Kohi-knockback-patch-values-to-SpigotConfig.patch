@@ -1,0 +1,25 @@
+From d340c0646057f4d499786508a3193e13804cea0c Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Thu, 23 Aug 2018 18:08:07 -0400
+Subject: [PATCH] Added-Kohi-knockback-patch-values-to-SpigotConfig
+
+
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index f407eb8c..2d8cdab7 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -398,4 +398,11 @@ public class SpigotConfig
+             Bukkit.getLogger().info( "Debug logging is disabled" );
+         }
+     }
++
++    public static double knockbackFriction = 2.0D;
++    public static double knockbackHorizontal = 0.35D;
++    public static double knockbackVertical = 0.35D;
++    public static double knockbackVerticalLimit = 0.4D;
++    public static double knockbackExtraHorizontal = 0.425D;
++    public static double knockbackExtraVertical = 0.085D;
+ }
+-- 
+2.13.0.windows.1
+

@@ -1,0 +1,52 @@
+From 5bc7a295de2d1dd6a00f6484ab20168cb798cfd2 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Thu, 23 Aug 2018 18:06:24 -0400
+Subject: [PATCH] Added-Kohi-knockback-patch-to-EntityLiving
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index efb57695..2172dff3 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -25,6 +25,7 @@ import org.bukkit.event.entity.PotionEffectExpireEvent;
+ import org.bukkit.event.entity.PotionEffectRemoveEvent;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
++import org.spigotmc.SpigotConfig;
+ 
+ public abstract class EntityLiving extends Entity {
+ 
+@@ -851,18 +852,18 @@ public abstract class EntityLiving extends Entity {
+     public void a(Entity entity, float f, double d0, double d1) {
+         if (this.random.nextDouble() >= this.getAttributeInstance(GenericAttributes.c).getValue()) {
+             this.al = true;
+-            float f1 = MathHelper.sqrt(d0 * d0 + d1 * d1);
+-            float f2 = 0.4F;
+-
+-            this.motX /= 2.0D;
+-            this.motY /= 2.0D;
+-            this.motZ /= 2.0D;
+-            this.motX -= d0 / (double) f1 * (double) f2;
+-            this.motY += (double) f2;
+-            this.motZ -= d1 / (double) f1 * (double) f2;
+-            if (this.motY > 0.4000000059604645D) {
+-                this.motY = 0.4000000059604645D;
+-            }
++
++            double magnitude = MathHelper.sqrt(d0 * d0 + d1 * d1);
++
++            this.motX /= SpigotConfig.knockbackFriction;
++            this.motY /= SpigotConfig.knockbackFriction;
++            this.motZ /= SpigotConfig.knockbackFriction;
++
++            this.motX -= d0 / magnitude * SpigotConfig.knockbackHorizontal;
++            this.motY += SpigotConfig.knockbackVertical;
++            this.motZ -= d1 / magnitude * SpigotConfig.knockbackHorizontal;
++
++            if (this.motY > SpigotConfig.knockbackVerticalLimit) this.motY = SpigotConfig.knockbackVerticalLimit;
+         }
+     }
+ 
+-- 
+2.13.0.windows.1
+

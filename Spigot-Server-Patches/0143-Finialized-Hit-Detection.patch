@@ -1,0 +1,39 @@
+From 9f1345a7e40410a720e06ad417ae5c85c1d04eed Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sun, 9 Dec 2018 09:28:53 -0500
+Subject: [PATCH] Finialized-Hit-Detection
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index bcafb8d1..a076c7a5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -557,15 +557,15 @@ public class CraftEventFactory {
+             {
+                 CraftPlayer craftDamager = (CraftPlayer) damager.getBukkitEntity();
+                 CraftPlayer craftDamagee = (CraftPlayer) damagee.getBukkitEntity();
+-                boolean successful = false;
+                 Location lineOfSight = craftDamager.getEyeLocation();
+-                double distanceEye = craftDamager.getEyeLocation().distance(craftDamagee.getLocation());
++                double distanceEye = lineOfSight.distance(craftDamagee.getLocation());
+                 double distanceLocation = craftDamager.getLocation().distance(craftDamagee.getLocation());
+                 double distance = distanceEye < distanceLocation ? distanceEye : distanceLocation;
+                 if(distance < 5.0d)
+                 {
+                     if(distance >= 0.57d)
+                     {
++                        boolean successful = false;
+                         Vector vectorEye = craftDamagee.getEyeLocation().toVector().subtract(lineOfSight.toVector());
+                         Vector vectorLocation = craftDamagee.getLocation().toVector().subtract(lineOfSight.toVector());
+                         double accuracyEye = vectorEye.normalize().dot((lineOfSight.getDirection()));
+@@ -579,6 +579,7 @@ public class CraftEventFactory {
+                         if(!successful) event.setCancelled(true);
+                     }
+                 }
++                else event.setCancelled(true);
+             }
+         }
+ 
+-- 
+2.13.0.windows.1
+

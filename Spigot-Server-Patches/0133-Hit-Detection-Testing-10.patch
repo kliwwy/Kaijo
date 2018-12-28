@@ -1,0 +1,44 @@
+From 14a553b36ed9b9119896bde09f767b0717ed6415 Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 21:05:06 -0500
+Subject: [PATCH] Hit-Detection-Testing-10
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index cd4c4935..b8e3ce89 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -556,15 +556,26 @@ public class CraftEventFactory {
+             if(damager.getBukkitEntity() instanceof CraftPlayer && damagee.getBukkitEntity() instanceof CraftPlayer)
+             {
+                 Location lineOfSight = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation();
+-                double distance = ((CraftPlayer)damager.getBukkitEntity()).getLocation().distance(((CraftPlayer)damagee.getBukkitEntity()).getLocation());
++                double distance = ((CraftPlayer)damager.getBukkitEntity()).getEyeLocation().distance(((CraftPlayer)damagee.getBukkitEntity()).getLocation());
+                 Vector accuracyEye = ((CraftPlayer)damagee.getBukkitEntity()).getEyeLocation().toVector().subtract(lineOfSight.toVector());
+                 Vector accuracyLocation = ((CraftPlayer)damagee.getBukkitEntity()).getLocation().toVector().subtract(lineOfSight.toVector());
+                 double accuracy = accuracyEye.normalize().dot(lineOfSight.getDirection()) > accuracyLocation.normalize().dot(lineOfSight.getDirection()) ? accuracyEye.normalize().dot(lineOfSight.getDirection()) : accuracyLocation.normalize().dot(lineOfSight.getDirection());
+-                Bukkit.broadcastMessage(((CraftPlayer)damager.getBukkitEntity()).getName() + " hit: distance: " + distance + ", accuracy: " + accuracy + "%");
++                Bukkit.broadcastMessage(((CraftPlayer)damager.getBukkitEntity()).getName() + "'s hit: distance: " + distance + ", accuracy: " + accuracy);
++                if(distance < 5.0d)
++                {
++                    if(distance >= 0.57d)
++                    {
++                        if(distance >= 4.0d && accuracy >= 0.99d) callEvent(event);
++                        if(distance < 4.0d && distance >= 3.0d && accuracy >= 0.97d) callEvent(event);
++                        if(distance < 3.0d && distance >= 2.0d && accuracy >= 0.94d) callEvent(event);
++                        if(distance < 2.0d && distance >= 1.0d && accuracy >= 0.84d) callEvent(event);
++                        if(distance < 1.0d && accuracy >= 0.77d) callEvent(event);
++                    }
++                    else callEvent(event);
++                }
+             }
+         }
+-
+-        callEvent(event);
++        else callEvent(event);
+ 
+         if (!event.isCancelled()) {
+             event.getEntity().setLastDamageCause(event);
+-- 
+2.13.0.windows.1
+

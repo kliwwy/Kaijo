@@ -1,0 +1,45 @@
+From e47c34a4ec573b81ff93bd54d7c89292e954d8db Mon Sep 17 00:00:00 2001
+From: BuildTools <unconfigured@null.spigotmc.org>
+Date: Sat, 8 Dec 2018 18:29:19 -0500
+Subject: [PATCH] Modified-Command-Class
+
+
+diff --git a/src/main/java/org/bukkit/command/Command.java b/src/main/java/org/bukkit/command/Command.java
+index 50e59f01..afe3a965 100644
+--- a/src/main/java/org/bukkit/command/Command.java
++++ b/src/main/java/org/bukkit/command/Command.java
+@@ -354,7 +354,7 @@ public abstract class Command {
+     }
+ 
+     public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
+-        String result = source.getName() + ": " + message;
++        String result = ChatColor.GREEN + source.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + message;
+ 
+         if (source instanceof BlockCommandSender) {
+             BlockCommandSender blockCommandSender = (BlockCommandSender) source;
+@@ -373,7 +373,7 @@ public abstract class Command {
+         }
+ 
+         Set<Permissible> users = Bukkit.getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+-        String colored = ChatColor.GRAY + "" + ChatColor.ITALIC + "[" + result + ChatColor.GRAY + ChatColor.ITALIC + "]";
++        String colored = ChatColor.DARK_GRAY + "[" + ChatColor.RED + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "] " + ChatColor.RESET + result;
+ 
+         if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+             source.sendMessage(message);
+@@ -382,12 +382,7 @@ public abstract class Command {
+         for (Permissible user : users) {
+             if (user instanceof CommandSender && user.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)) {
+                 CommandSender target = (CommandSender) user;
+-
+-                if (target instanceof ConsoleCommandSender) {
+-                    target.sendMessage(result);
+-                } else if (target != source) {
+-                    target.sendMessage(colored);
+-                }
++                target.sendMessage(colored);
+             }
+         }
+     }
+-- 
+2.13.0.windows.1
+
