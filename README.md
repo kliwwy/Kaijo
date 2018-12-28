@@ -1,11 +1,9 @@
-# IPVP PaperSpigot 1.7 Fork #
-<p>This is the primary repository for the IPVP PaperSpigot 1.7.10 software. PaperSpigot is a high performance 
-Spigot fork that aims to fix gameplay and mechanics inconsistencies. PaperSpigot 1.7.10 is no longer a supported
-software by their development team; please do not bug them to fix any issues for you. You are free to submit
-issues via the Issue tracker on GitHub, we will aim to fix or add any issues you come across.</p>
+# Kaijo PaperSpigot 1.7 Fork #
+<p>This is the primary repository for the Kaijo PaperSpigot 1.7.10 software. PaperSpigot is a high performance 
+Spigot fork that aims to fix gameplay and mechanics inconsistencies. I will not continue to update this, development is finished.</p>
 
 ## Installation Instructions ##
-Install our customized version of PaperSpigot via 3 easy steps:
+Install Kaijo:
 
 1. Clone this repository to your computer via `git clone` or GitHub's download feature
 2. Initialize git submodules: `git submodule update --init` 
